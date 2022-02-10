@@ -7,6 +7,10 @@ parameters:
   displayName: 'Specify build app version'
   type: string
   default: "18.0"
+- name: appRevision
+  displayName: 'Specify build app revision'
+  type: string
+  default: "0"
 - name: azureSubscription
   displayName: 'Specify azure subscription name'
   type: string
@@ -30,7 +34,7 @@ stages:
       build.clean: all
       platform: x64
       appBuild: $[counter(variables['appVersion'],0)]
-      appRevision: 0
+      appRevision: '${{ parameters.appRevision }}'
       skipComponentGovernanceDetection: True
 
     steps:
