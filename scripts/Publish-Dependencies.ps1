@@ -20,8 +20,10 @@ $settings.dependencies | ForEach-Object {
     Write-Host "Publishing $_"
     #Publish-BCContainerApp -containerName $containerName -appFile $_ -skipVerification:$skipVerification -sync -install -upgrade -ignoreIfAppExists
 
+    $appFile = $_
+
     Write-Host "Container deployment to ${containerName}"
-    Publish-BCContainerApp -containerName $containerName -appFile $_ -skipVerification -scope Global
+    Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification -scope Global
     $containerPath = Join-Path "C:\Run\My" (Split-Path -Path $appFile -Leaf)
     Copy-FileToBcContainer -containerName $containerName -localPath $appFile -containerPath $containerPath 
     
@@ -57,5 +59,5 @@ $settings.dependencies | ForEach-Object {
                 }                   
             }
         }
-    }
+    } -argumentList $appName
 }
