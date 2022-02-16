@@ -18,5 +18,5 @@ Param(
 $settings = (Get-Content -Path $configurationFilePath -Encoding UTF8 | Out-String | ConvertFrom-Json)
 $settings.dependencies | ForEach-Object {
     Write-Host "Publishing $_"
-    Publish-BCContainerApp -containerName $containerName -appFile $_ -skipVerification:$skipVerification -sync -install -upgrade -ignoreIfAppExists
+    Publish-BCContainerApp -containerName $containerName -appFile $_ -skipVerification:$skipVerification -sync -install -ignoreIfAppExists
 }
