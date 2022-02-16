@@ -20,12 +20,15 @@ $settings.dependencies | ForEach-Object {
     Write-Host "Publishing $_"
     #Publish-BCContainerApp -containerName $containerName -appFile $_ -skipVerification:$skipVerification -sync -install -upgrade -ignoreIfAppExists
 
-    $appFile = $_
+    $guid = New-Guid
+    $appFile = Join-Path $env:TEMP $guid.Guid
+    Write-Host "Downloading app file ${$_} to ${$appFile}"    
+    Download-File -sourceUrl $_ -destinationFile $appFile
 
     Write-Host "Container deployment to ${containerName}"
     Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification -scope Global
     $containerPath = Join-Path "C:\Run\My" (Split-Path -Path $appFile -Leaf)
-    Copy-FileToBcContainer -containerName $containerName -localPath $appFile -containerPath $containerPath 
+    Copy-FileToBcContainer -containerName $containerName  $appFile -containerPath $containerPath 
     
     $appName = Invoke-ScriptInBcContainer -containerName $containerName -scriptblock {
         param($appFile)
