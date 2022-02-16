@@ -33,6 +33,6 @@ if ($licenseFile) {
 Sort-AppFoldersByDependencies -appFolders $appFolders.Split(',') -baseFolder $buildProjectFolder -WarningAction SilentlyContinue | ForEach-Object {
     Write-Host "Publishing $_"
     Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
-        Publish-BCContainerApp -containerName $containerName -appFile $_.FullName -skipVerification:$skipVerification -sync -install -upgrade -ignoreIfAppExists
+        Publish-BCContainerApp -containerName $containerName -appFile $_.FullName -skipVerification:$skipVerification -sync -install
     }
 }
