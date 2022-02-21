@@ -48,7 +48,7 @@ else {
     $auth = 'UserPassword'
     $artifact = $settings.versions[0].artifact
 
-    elseif ($artifact -like "https://*") {
+    if ($artifact -like "https://*") {
         $artifactUrl = $artifact
     } else {
         $segments = "$artifact/////".Split('/')
