@@ -25,7 +25,7 @@
     
 )
 
-Write-Host "Deploying apps from ${artifactFolder} to branch ${branchName} ..."
+Write-Host "Deploying apps from ${artifactsFolder} to branch ${branchName} ..."
 $settings = (Get-Content -Path $configurationFilePath -Encoding UTF8 | Out-String | ConvertFrom-Json)
 if ($clientId -is [string]) {
     if ($clientSecret -is [String]) { $clientSecret = ConvertTo-SecureString -String $clientSecret -AsPlainText -Force }
@@ -228,6 +228,7 @@ foreach ($deployment in $deployments) {
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
                     Write-Host "Publishing v$($CurrentApp.Version)"    
+                    Write-Host "Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification"
                     Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
                 
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
