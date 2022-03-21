@@ -11,40 +11,6 @@
     Invoke-Command -Session $session -ScriptBlock ([ScriptBlock]::Create([System.IO.File]::ReadAllText($filename))) -ArgumentList $argumentList
 }
 
-function CopyFileToSession {
-    Param(
-        [Parameter(Mandatory = $true)]
-        [System.Management.Automation.Runspaces.PSSession] $session,
-        $localfile,
-        [switch] $returnSecureString
-    )
-
-    if ($localfile) {
-        if ($localFile -is [securestring]) {
-            $localFile = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($localFile)))
-        }
-        if ($localfile -notlike "https://*" -and $localfile -notlike "http://*") {
-            $tempFilename = Join-Path (GetTempPathFromSession -session $session) "$([Guid]::NewGuid().ToString())"
-            Copy-Item -ToSession $session -Path $localFile -Destination $tempFilename
-            $localfile = $tempFilename
-        }
-        if ($returnSecureString) {
-            ConvertTo-SecureString -String $localfile -AsPlainText -Force
-        }
-        else {
-            $localfile
-        }
-    }
-    else {
-        if ($returnSecureString) {
-            $null
-        }
-        else {
-            ""
-        }
-    }
-}
-
 function GetTempPathFromSession {
     Param(
         [Parameter(Mandatory = $true)]
