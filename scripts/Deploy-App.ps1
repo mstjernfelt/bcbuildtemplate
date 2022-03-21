@@ -228,7 +228,10 @@ foreach ($deployment in $deployments) {
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
                     Write-Host "Publishing v$($CurrentApp.Version)"    
-                    Write-Host "Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification"
+                    Write-Host "#DEBUG Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification" -ForegroundColor Gray
+                    Write-Host "#DEBUG Computer Name: $env:computername" -ForegroundColor Gray
+                    Write-Host "#DEBUG User Name: $env:username" -ForegroundColor Gray
+                    
                     Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
                 
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
