@@ -234,9 +234,11 @@ foreach ($deployment in $deployments) {
                         $try++
 
                         try {
+                            $ErrorActionPreference = "Stop"
                             Write-Host "Publishing v$($CurrentApp.Version) (Try $try of $retries)"
+                            Write-Host "Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification -ErrorAction Stop"
                             Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification -ErrorAction Stop
-                            $try = $retries + 1;
+                            break;
                         }
                         catch {
                             Write-Host "Error publishing $appFile, $_" -ForegroundColor Red
