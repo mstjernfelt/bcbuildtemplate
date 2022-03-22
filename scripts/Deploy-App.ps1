@@ -230,12 +230,13 @@ foreach ($deployment in $deployments) {
                     $retries = 3;
                     $try = 0;
 
-                    while ($try -ne $retries) {
+                    while ($try -le $retries) {
                         $try++
 
                         try {
                             Write-Host "Publishing v$($CurrentApp.Version) (Try $try of $retries)"
                             Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
+                            break;
                         }
                         catch {
                             Write-Host "Error publishing $appFile, $_" -ForegroundColor Red
