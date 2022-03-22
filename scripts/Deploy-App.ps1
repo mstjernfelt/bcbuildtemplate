@@ -39,7 +39,7 @@ if ($PowerShellUsername -is [string]) {
 $appFolders = $settings.appFolders
 $deployments = @()
 $deployments += $settings.deployments | Where-Object { $_.branch -eq $branchName }
-$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1)}
+$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1) }
 foreach ($deployment in $deployments) {
     $deploymentType = $deployment.DeploymentType
 
@@ -227,12 +227,20 @@ foreach ($deployment in $deployments) {
                     
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
-                    Write-Host "Publishing v$($CurrentApp.Version)"    
-                    Write-Host "#DEBUG Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification" -ForegroundColor Gray
-                    Write-Host "#DEBUG Computer Name: $env:computername" -ForegroundColor Gray
-                    Write-Host "#DEBUG User Name: $env:username" -ForegroundColor Gray
-                    
-                    Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
+                    $retries = 3;
+                    $try = 0;
+
+                    while ($try -ne $retries) {
+                        $try++
+
+                        try {
+                            Write-Host "Publishing v$($CurrentApp.Version) (Try $try of $retries)"
+                            Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
+                        }
+                        catch {
+                            Write-Host "Error publishing $appFile, $_" -ForegroundColor Red
+                        }
+                    }
                 
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
@@ -415,7 +423,7 @@ foreach ($deployment in $deployments) {
     }
     if ($vmSession) {
         Remove-PSSession -Session $vmSession    
-}
+    }
 
 }
 
