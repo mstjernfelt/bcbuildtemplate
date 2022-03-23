@@ -23,6 +23,10 @@ parameters:
   displayName: 'Specifies the path to the release note template markdown file'
   type: string
   default: ''
+- name: DeployToInstance
+  displayName: 'Specify if deployment should be executed for this run'
+  type: boolean
+  default: True
 
 stages:
 - stage: Deployment
@@ -67,7 +71,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Deploy to Environment'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),eq('${{ parameters.DeployToInstance}}','True'))
       env:
         ClientId: $(ClientId)
         ClientSecret: $(ClientSecret)
@@ -77,6 +81,16 @@ stages:
         targetType: filePath
         filePath: 'bcbuildtemplate\scripts\Deploy-App.ps1'
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Pipeline.Workspace)/self-pipe/${{ parameters.appVersion }}" -branchName "$(resources.pipeline.self-pipe.sourceBranch)"'
+
+    - task: UniversalPackages@0
+      displayName: 'Publish to Artifact Feed'
+      inputs:
+        command: 'publish'
+        publishDirectory: '$(Build.ArtifactStagingDirectory)'
+        feedsToUsePublish: 'internal'
+        vstsFeedPublish: 'ddff1144-2bd3-45db-978e-591d87c39470'
+        vstsFeedPackagePublish: 'desenio'
+        packagePublishDescription: 'Desenio Custom app'        
     
 - stage: ReleaseNote
   jobs:
