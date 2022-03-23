@@ -21,4 +21,3 @@ extends:
     azureSubscription: "BC_Production_DevOps"
     configurationFilePath: ".azureDevOps\\pte-prod-settings.json"
     releasenoteTemplateFilePath: ".azureDevOps\\pte-prod-releasenote.md"
-    DeployToInstance: $(configuration)
