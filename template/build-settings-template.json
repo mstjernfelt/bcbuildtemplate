@@ -26,6 +26,11 @@
         "azureContainerName": "",
         "branchNames": [""]
     },
+    "azureBlobRelease": {
+        "azureStorageAccount": "",
+        "azureContainerName": "",
+        "branchNames": [""]
+    },
     "testMethod": {
         "companyName": "My Company",
         "codeunitId": 60298,

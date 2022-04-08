@@ -78,6 +78,20 @@ if ($property.Value) {
     Write-Host "##vso[task.setvariable variable=azureStorageAccount]"
 }
 
+$property = $settings.PSObject.Properties.Match('azureBlobRelease')
+if ($property.Value) {
+    Write-Host "Set azureReleaseStorageAccount = $($settings.azureBlobRelease.azureStorageAccount)"
+    Write-Host "##vso[task.setvariable variable=azureReleaseStorageAccount]$($settings.azureBlobRelease.azureStorageAccount)"
+    Write-Host "Set azureReleaseContainerName = $($settings.azureBlobRelease.azureContainerName)"
+    Write-Host "##vso[task.setvariable variable=azureReleaseContainerName]$($settings.azureBlobRelease.azureContainerName)"
+    }
+else {
+    Write-Host "Set azureReleaseStorageAccount = ''"
+    Write-Host "##vso[task.setvariable variable=azureReleaseStorageAccount]"
+    Write-Host "Set azureReleaseContainerName = ''"
+    Write-Host "##vso[task.setvariable variable=azureReleaseContainerName]"
+}
+
 $imageversion = $settings.versions | Where-Object { $_.version -eq $version }
 if ($imageversion) {
     Write-Host "Set artifact = $($imageVersion.artifact)"

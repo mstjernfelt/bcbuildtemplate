@@ -65,6 +65,17 @@ stages:
     - download: self-pipe
       displayName: 'Download build artifacts'
 
+    - task: AzureFileCopy@4
+      displayName: 'Copy Runtime Apps to Azure Blob'
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.createRuntimePackages}}','True'),eq('${{ parameters.version }}','current'),ne(variables['azureReleaseStorageAccount'],''),ne(variables['appFolders'],''))
+      inputs:
+        SourcePath: 'self-pipe\${{ parameters.appVersion }}\RuntimePackages\*\*.app'
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        Destination: AzureBlob
+        storage: '$(azureReleaseStorageAccount)'
+        ContainerName: '$(azureReleaseStorageAccount)'
+        BlobPrefix: '$(Build.Repository.Name)'
+
     - task: PowerShell@2
       displayName: 'Deploy to Environment'
       condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'))
