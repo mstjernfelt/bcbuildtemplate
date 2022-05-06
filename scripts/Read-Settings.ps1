@@ -16,12 +16,18 @@ Param(
     [string] $appVersion = "",
 
     [Parameter(Mandatory = $true)]
-    [string] $branchName
+    [string] $branchName,
+
+    [Parameter(Mandatory = $true)]
+    [switch] $validationBuild
+
 )
 
-if ($appVersion) {
+if ( ($appVersion) -and (! $validationBuild) ) {
     Write-Host "Updating build number to $appVersion"
     write-host "##vso[build.updatebuildnumber]$appVersion"
+} else {
+    Write-Host "Validation build skip updating build number"
 }
 
 $settings = (Get-Content -Path $configurationFilePath -Encoding UTF8 | Out-String | ConvertFrom-Json)

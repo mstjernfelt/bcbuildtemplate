@@ -19,6 +19,10 @@ parameters:
   displayName: 'Specifies the path to the build-settings.json file'
   type: string
   default: '.azureDevOps\build-settings.json'
+- name: validationBuild
+  displayName: 'Specify boolean value for validation build, run no tests and no deployment'
+  type: boolean
+  default: False
 
 stages:
 - stage: Build
@@ -55,7 +59,7 @@ stages:
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)"'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)" -validationBuild ${{ parameters.validationBuild }}'
         failOnStderr: true
     
     - task: PowerShell@2
@@ -174,7 +178,7 @@ stages:
     
     - task: PowerShell@2
       displayName: 'Get App RuntimePackage'
-      condition: and(succeeded(),eq('${{ parameters.createRuntimePackages}}','True'))
+      condition: and(succeeded(),eq('${{ parameters.createRuntimePackages}}','True'),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Get-AppRuntimePackage.ps1'
@@ -183,7 +187,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Sign RuntimePackage'
-      condition: and(succeeded(),eq('${{ parameters.createRuntimePackages}}','True'),ne(variables['CodeSignPfxFile'],''),ne(variables['CodeSignPfxPassword'],''))
+      condition: and(succeeded(),eq('${{ parameters.createRuntimePackages}}','True'),ne(variables['CodeSignPfxFile'],''),ne(variables['CodeSignPfxPassword'],''),eq(${{ parameters.validationBuild }}, 'false'))
       env:
         codeSignPfxFile: $(CodeSignPfxFile)
         codeSignPfxPassword: $(CodeSignPfxPassword)
@@ -195,7 +199,7 @@ stages:
         
     - task: PowerShell@1
       displayName: Remove Test App from Artifact Staging Directory
-      condition: and(succeeded(),ne(variables['testFolders'],''))
+      condition: and(succeeded(),ne(variables['testFolders'],''),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         scriptType: inlineScript
         inlineScript: >
@@ -205,13 +209,14 @@ stages:
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifacts'
+      condition: eq(${{ parameters.validationBuild }}, 'false')
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: '${{ parameters.appVersion }}'
 
     - task: PowerShell@2
       displayName: Copy App to Release folder
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\CopyTo-LatestFolder.ps1'
@@ -220,7 +225,7 @@ stages:
 
     - task: AzureFileCopy@4
       displayName: 'Copy Release Apps to Azure Blob'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         SourcePath: '$(Build.ArtifactStagingDirectory)\${{ parameters.version }}\${{ parameters.appVersion }}\*\*.app'
         azureSubscription: '${{ parameters.azureSubscription }}'
@@ -231,7 +236,7 @@ stages:
 
     - task: AzureFileCopy@4
       displayName: 'Copy Artifact Apps to Azure Blob'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         SourcePath: '$(Build.ArtifactStagingDirectory)\*\*.app'
         azureSubscription: '${{ parameters.azureSubscription }}'
@@ -242,7 +247,7 @@ stages:
 
     - task: AzureFileCopy@4
       displayName: 'Copy Runtime Apps to Azure Blob'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.createRuntimePackages}}','True'),eq('${{ parameters.version }}','current'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.createRuntimePackages}}','True'),eq('${{ parameters.version }}','current'),ne(variables['azureStorageAccount'],''),ne(variables['appFolders'],''),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         SourcePath: '$(Build.ArtifactStagingDirectory)\RuntimePackages\*\*.app'
         azureSubscription: '${{ parameters.azureSubscription }}'
@@ -267,7 +272,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Validate App'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),eq(${{ parameters.validationBuild }}, 'false'))
       env:
         LicenseFile: $(LicenseFile)
         InsiderSasToken: $(InsiderSasToken)
@@ -279,7 +284,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Upgrade Microsoft Apps'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),eq(${{ parameters.validationBuild }}, 'false'))
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Upgrade-MicrosoftApps.ps1'
@@ -288,7 +293,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Deploy to Environment'
-      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'))
+      condition: and(succeeded(),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),eq(${{ parameters.validationBuild }}, 'false'))
       env:
         ClientId: $(ClientId)
         ClientSecret: $(ClientSecret)
