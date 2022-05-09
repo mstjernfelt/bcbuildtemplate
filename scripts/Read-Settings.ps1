@@ -123,18 +123,18 @@ else {
 Write-Host "Repository: $($ENV:BUILD_REPOSITORY_NAME)"
 Write-Host "Build Reason: $($ENV:BUILD_REASON)"
 
-$buildName += ($ENV:BUILD_REPOSITORY_NAME).Split('/')[1]
+$buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[1]
 
 Write-Host "dbg:buildName1: $($buildName)"
 
 if ([string]::IsNullOrEmpty($buildName)) {
-    $buildName += ($ENV:BUILD_REPOSITORY_NAME).Split('/')[0]
+    $buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[0]
     $containerNamePrefix = ""
 }
 
 Write-Host "dbg:buildName2: $($buildName)"
 
-$buildName = ($ENV:BUILD_BUILDNUMBER -replace '[^a-zA-Z0-9]', '').Substring(8)
+$buildName = $buildName + ($ENV:BUILD_BUILDNUMBER -replace '[^a-zA-Z0-9]', '').Substring(8)
 
 Write-Host "dbg:buildName3: $($buildName)"
 
