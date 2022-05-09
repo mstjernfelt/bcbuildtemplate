@@ -113,9 +113,7 @@ else {
     if ($imageName -eq "") {
         $containerNamePrefix = "bld"
     }
-    else {
-        $containerNamePrefix = "$imageName"
-    }
+    
     Write-Host "Set imageName = $imageName"
     Write-Host "##vso[task.setvariable variable=imageName]$imageName"
 }
@@ -127,7 +125,6 @@ $buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[1]
 
 if ([string]::IsNullOrEmpty($buildName)) {
     $buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[0]
-    $containerNamePrefix = ""
 }
 
 $buildName = $buildName + ($ENV:BUILD_BUILDNUMBER -replace '[^a-zA-Z0-9]', '').Substring(8)
