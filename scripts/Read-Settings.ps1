@@ -127,7 +127,7 @@ Write-Host "Build Reason: $($ENV:BUILD_REASON)"
 $buildName = ($ENV:BUILD_BUILDNUMBER -replace '[^a-zA-Z0-9]', '').Substring(8)
 Write-Host "dbg:buildName1: $($buildName)"
 
-$buildName += ($ENV:BUILD_REPOSITORY_NAME).Split('/')[1]
+$buildName += ($ENV:BUILD_REPOSITORY_NAME).Split('/')[0]
 Write-Host "dbg:buildName2: $($buildName)"
 
 $containerName = "$($containerNamePrefix)$("${buildName}" -replace '[^a-zA-Z0-9]', '')".ToUpper()
