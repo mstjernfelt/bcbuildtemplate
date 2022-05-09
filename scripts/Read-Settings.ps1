@@ -102,8 +102,6 @@ else {
     throw "Unknown version: $version"
 }
 
-Write-Host "dbg:Agent Name: $ENV:AGENT_NAME"
-
 if ("$($ENV:AGENT_NAME)" -eq "Hosted Agent" -or "$($ENV:AGENT_NAME)" -like "Azure Pipelines*") {
     $containerNamePrefix = "ci"
     Write-Host "Set imageName = ''"
