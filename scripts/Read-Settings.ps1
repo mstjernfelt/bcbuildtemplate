@@ -125,21 +125,14 @@ Write-Host "Build Reason: $($ENV:BUILD_REASON)"
 
 $buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[1]
 
-Write-Host "dbg:buildName1: $($buildName)"
-
 if ([string]::IsNullOrEmpty($buildName)) {
     $buildName = ($ENV:BUILD_REPOSITORY_NAME).Split('/')[0]
     $containerNamePrefix = ""
 }
 
-Write-Host "dbg:buildName2: $($buildName)"
-
 $buildName = $buildName + ($ENV:BUILD_BUILDNUMBER -replace '[^a-zA-Z0-9]', '').Substring(8)
 
-Write-Host "dbg:buildName3: $($buildName)"
-
 $containerName = "$($containerNamePrefix)$("${buildName}" -replace '[^a-zA-Z0-9]', '')".ToUpper()
-Write-Host "dbg:containerName1: $($containerName)"
 
 if ($containerName.Length -gt 15) {
     $containerName = $containerName.Substring(0, 15)
