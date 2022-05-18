@@ -24,9 +24,6 @@ parameters:
   type: boolean
   default: False
 
-variables:
-  gUseAzureSignTool: ${{ parameters.useAzureSignTool }}
-
 stages:
 - stage: Build
   jobs:
@@ -39,6 +36,7 @@ stages:
       appBuild: $[counter(variables['appVersion'],0)]
       appRevision: 0
       skipComponentGovernanceDetection: True
+      useAzureSignTool: ${{ parameters.useAzureSignTool }}
 
     steps:
     - checkout: self

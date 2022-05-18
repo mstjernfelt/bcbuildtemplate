@@ -19,9 +19,7 @@
     [securestring] $codeSignPfxPassword = $null
 )
 
-Write-Host "User AzureSignTool: $(gUseAzureSignTool)"
-
-if (-not $(gUseAzureSignTool)) {
+if (-not $(useAzureSignTool)) {
     if (-not ($CodeSignPfxFile)) {
         $CodeSignPfxFile = try { $ENV:CODESIGNPFXFILE | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXFILE -AsPlainText -Force }
     }
