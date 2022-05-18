@@ -25,7 +25,7 @@ parameters:
   default: False
 
 variables:
-  useAzureSignTool: ${{ parameters.useAzureSignTool }}
+  gUseAzureSignTool: ${{ parameters.useAzureSignTool }}
 
 stages:
 - stage: Build
