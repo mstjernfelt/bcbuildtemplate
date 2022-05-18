@@ -19,7 +19,7 @@
     [securestring] $codeSignPfxPassword = $null
 )
 
-if (-not $(useAzureSignTool)) {
+if (-not $env:USEAZURESIGNTOOL) {
     if (-not ($CodeSignPfxFile)) {
         $CodeSignPfxFile = try { $ENV:CODESIGNPFXFILE | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXFILE -AsPlainText -Force }
     }
