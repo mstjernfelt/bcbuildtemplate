@@ -16,6 +16,8 @@ resources:
 
 variables:
 - group: BuildVariables
+- name: useAzureSignTool
+  value: true
 
 extends:
   template: /.azureDevOps/CI.yml@Template
@@ -25,5 +27,4 @@ extends:
     azureSubscription: ""
     createRuntimePackages: true
     configurationFilePath: '.azureDevOps\build-settings.json'
-    useAzureSignTool: true
 
