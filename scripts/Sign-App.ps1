@@ -38,13 +38,12 @@ if (-not $env:USEAZURESIGNTOOL) {
 }
 else {
     Write-Host "Variables:"
-    Write-Host "-azure-key-vault-tenant-id $(azure-key-vault-tenant-id)"
-    Write-Host "-kvu $(azure-key-vault-url)"
-    Write-Host "-kvi $(azure-key-vault-client-id)"
-    Write-Host "-kvs $(azure-key-vault-client-secret)"
-    Write-Host "-kvc $(azure-key-vault-certificate)"
-    Write-Host "-tr $(timestamp)"
-    Write-Host "-td sha256 $_.FullName"
+    Write-Host "-azure-key-vault-tenant-id $($env:azurekeyvaulttenantid)"
+    Write-Host "-kvu $($env:azurekeyvaulturl)"
+    Write-Host "-kvi $($env:azurekeyvaultclientid)"
+    Write-Host "-kvs $($env:azurekeyvaultclientsecret)"
+    Write-Host "-kvc $($env:azurekeyvaultcertificate)"
+    Write-Host "-tr $($env:timestamp)"
 
     $appFolders.Split(',') | ForEach-Object {
         Write-Host "Signing $_ with AzureSignTool"
