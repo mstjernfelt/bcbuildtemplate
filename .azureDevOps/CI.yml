@@ -36,7 +36,6 @@ stages:
       appBuild: $[counter(variables['appVersion'],0)]
       appRevision: 0
       skipComponentGovernanceDetection: True
-      useAzureSignTool: ${{ parameters.useAzureSignTool }}
 
     steps:
     - checkout: self
