@@ -25,4 +25,5 @@ extends:
     azureSubscription: ""
     createRuntimePackages: true
     configurationFilePath: '.azureDevOps\build-settings.json'
+    useAzureSignTool: true
 
