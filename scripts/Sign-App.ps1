@@ -48,7 +48,7 @@ else {
     $appFolders.Split(',') | ForEach-Object {
         Write-Host "Signing $_ with AzureSignTool"
         Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
-            AzureSignTool sign --azure-key-vault-tenant-id $($env:azurekeyvaulttenantid) `
+            .\AzureSignTool sign --azure-key-vault-tenant-id $($env:azurekeyvaulttenantid) `
                 -kvu $($env:azurekeyvaulturl) `
                 -kvi $($env:azurekeyvaultclientid) `
                 -kvs $($env:azurekeyvaultclientsecret) `
