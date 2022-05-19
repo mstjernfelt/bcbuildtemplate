@@ -1,61 +1,36 @@
 ﻿Param(
-    [ValidateSet('AzureDevOps', 'Local', 'AzureVM')]
-    [Parameter(Mandatory = $false)]
+    [ValidateSet('AzureDevOps','Local','AzureVM')]
+    [Parameter(Mandatory=$false)]
     [string] $buildEnv = "AzureDevOps",
 
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory=$false)]
     [string] $containerName = $ENV:CONTAINERNAME,
 
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory=$false)]
     [string] $buildArtifactFolder = $ENV:BUILD_ARTIFACTSTAGINGDIRECTORY,
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory=$true)]
     [string] $appFolders,
 
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory=$false)]
     [securestring] $codeSignPfxFile = $null,
 
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory=$false)]
     [securestring] $codeSignPfxPassword = $null
 )
 
-if (-not $(useAzureSignTool)) {
-    if (-not ($CodeSignPfxFile)) {
-        $CodeSignPfxFile = try { $ENV:CODESIGNPFXFILE | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXFILE -AsPlainText -Force }
-    }
-    
-    if (-not ($CodeSignPfxPassword)) {
-        $CodeSignPfxPassword = try { $ENV:CODESIGNPFXPASSWORD | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXPASSWORD -AsPlainText -Force }
-    }
-    
-    $unsecurepfxFile = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($codeSignPfxFile)))
-    $appFolders.Split(',') | ForEach-Object {
-        Write-Host "Signing $_ with bccontainerhelper"
-        Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
-            Sign-BCContainerApp -containerName $containerName -appFile $_.FullName -pfxFile $unsecurePfxFile -pfxPassword $codeSignPfxPassword
-        }
-    }
+if (-not ($CodeSignPfxFile)) {
+    $CodeSignPfxFile = try { $ENV:CODESIGNPFXFILE | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXFILE -AsPlainText -Force }
 }
-else {
-    Write-Host "Variables:"
-    Write-Host "-azure-key-vault-tenant-id $(azure-key-vault-tenant-id)"
-    Write-Host "-kvu $(azure-key-vault-url)"
-    Write-Host "-kvi $(azure-key-vault-client-id)"
-    Write-Host "-kvs $(azure-key-vault-client-secret)"
-    Write-Host "-kvc $(azure-key-vault-certificate)"
-    Write-Host "-tr $(timestamp)"
-    Write-Host "-td sha256 $_.FullName"
 
-    $appFolders.Split(',') | ForEach-Object {
-        Write-Host "Signing $_ with AzureSignTool"
-        Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
-            AzureSignTool sign --azure-key-vault-tenant-id $(azure-key-vault-tenant-id) `
-                -kvu $(azure-key-vault-url) `
-                -kvi $(azure-key-vault-client-id) `
-                -kvs $(azure-key-vault-client-secret) `
-                -kvc $(azure-key-vault-certificate) `
-                -tr $(timestamp) `
-                -td sha256 $_.FullName
-        }
+if (-not ($CodeSignPfxPassword)) {
+    $CodeSignPfxPassword = try { $ENV:CODESIGNPFXPASSWORD | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXPASSWORD -AsPlainText -Force }
+}
+
+$unsecurepfxFile = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($codeSignPfxFile)))
+$appFolders.Split(',') | ForEach-Object {
+    Write-Host "Signing $_"
+    Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
+        Sign-BCContainerApp -containerName $containerName -appFile $_.FullName -pfxFile $unsecurePfxFile -pfxPassword $codeSignPfxPassword
     }
 }
