@@ -19,7 +19,7 @@ Param(
     [string] $branchName
 )
 
-.\AzureSignTool --help
+AzureSignTool --help
 
 Write-Host "Use Azure Sign Tool: $env:USEAZURESIGNTOOL"
 Write-Host "Variables:"
