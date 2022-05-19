@@ -20,8 +20,6 @@ parameters:
   type: string
   default: '.azureDevOps\build-settings.json'
 
-stages:
-- stage: Build
   jobs:
   - job: Build
     timeoutInMinutes: 120
