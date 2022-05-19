@@ -19,17 +19,6 @@ Param(
     [string] $branchName
 )
 
-Write-Host "Use Azure Sign Tool: $env:USEAZURESIGNTOOL"
-Write-Host "Variables:"
-Write-Host "-azure-key-vault-tenant-id $($env:azurekeyvaulttenantid)"
-Write-Host "-kvu $($env:azurekeyvaulturl)"
-Write-Host "-kvi $($env:azurekeyvaultclientid)"
-Write-Host "-kvs $($env:azurekeyvaultclientsecret)"
-Write-Host "-kvc $($env:azurekeyvaultcertificate)"
-Write-Host "-tr $($env:timestamp)"
-
-
-
 if ($appVersion) {
     Write-Host "Updating build number to $appVersion"
     write-host "##vso[build.updatebuildnumber]$appVersion"
