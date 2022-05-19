@@ -19,8 +19,6 @@ Param(
     [string] $branchName
 )
 
-AzureSignTool --help
-
 Write-Host "Use Azure Sign Tool: $env:USEAZURESIGNTOOL"
 Write-Host "Variables:"
 Write-Host "-azure-key-vault-tenant-id $($env:azurekeyvaulttenantid)"
