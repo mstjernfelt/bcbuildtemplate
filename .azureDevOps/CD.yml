@@ -79,15 +79,14 @@ stages:
     steps:
     - task: richardfennellBM.BM-VSTS-XplatGenerateReleaseNotes.XplatGenerate-Release-Notes.XplatGenerateReleaseNotes@3
       displayName: 'Generate Release Notes'
-      condition: ne('${{ parameters.releasenoteTemplateFilePath }}','')
+      condition: ne(${{ parameters.releasenoteTemplateFilePath }},'')
       inputs:
-        outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).md"
+        outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
         templatefile: "$(Build.Repository.LocalPath)/${{ parameters.releasenoteTemplateFilePath }}"
         checkStage: true
         stopOnRedeploy: false
         getParentsAndChildren: true
         dumpPayloadToConsole: true
-        dumpPayloadToFile: false
         replaceFile: True
         checkForManuallyLinkedWI: True
         stopOnError: true
@@ -96,16 +95,4 @@ stages:
       displayName: 'Publish Artifacts'
       inputs:
         PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-        ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).md"
-
-    - task: AzureFileCopy@4
-      inputs:
-        displayName: 'Copy Release Note to Azure Storage'
-        condition: and(succeeded(),ne('${{ parameters.releasenoteTemplateFilePath }}',''),ne(variables['Build.Reason'],'PullRequest'),eq('${{ parameters.version }}','current'),ne(variables['azureStorageAccount'],''))
-        SourcePath: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).md"
-        azureSubscription: 'BC_Production_DevOps'
-        Destination: 'AzureBlob'
-        storage: 'brightcomdevops'
-        ContainerName: 'devops'
-        BlobPrefix: "Artifact/$(Build.Repository.Name)/ReleaseNotes/releasenote-$(resources.pipeline.self-pipe.runName).md"
-
+        ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
