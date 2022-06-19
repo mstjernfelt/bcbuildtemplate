@@ -1,5 +1,7 @@
 Param(
     [Parameter(Mandatory = $true)]
+    [string] $taskName,
+    [Parameter(Mandatory = $true)]
     [string] $configurationFilePath
 )
 
@@ -15,6 +17,11 @@ Write-Host "Executing custom Powershell script."
 
 foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script from $extension.URI"
+
+    if ($extension.TaskName -ne $settings.scriptExtension) {
+        Write-Host "No custom PS script matches TaskName $extension.TaskName ($settings.scriptExtension)"
+        continue
+    }
 
     switch ($extension.URI) {
         {$_ -like "*https://raw.githubusercontent.com*"} { 
@@ -32,5 +39,6 @@ foreach ($extension in $settings.scriptExtension) {
         }
     }
 
+    Write-Host "Executing custom PS script $$extension.URI on task $settings.scriptExtension"
     . $ExtensionScript -parameters $extension.parameters
 }

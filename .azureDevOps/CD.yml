@@ -95,6 +95,14 @@ stages:
         checkForManuallyLinkedWI: True
         stopOnError: true
 
+    - task: PowerShell@2
+      displayName: 'OnAfterGenerateReleaseNote'
+      condition: succeeded()
+      inputs:
+        targetType: filePath
+        filePath: 'bcbuildtemplate\scripts\Get-ExctensionPSSCript.ps1'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
+
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
