@@ -14,7 +14,8 @@ if (Test-Path $ExtensionScript) {
 foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script $($extension.path)"
 
-    Write-Host $extension.parameters
+    $execParams = $($extension.parameters)
+    Write-Host $execParams
 
     if ($extension.TaskName -ne $ENV:SYSTEM_TASKDISPLAYNAME) {
         Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($ENV:SYSTEM_TASKDISPLAYNAME))"
@@ -37,7 +38,6 @@ foreach ($extension in $settings.scriptExtension) {
         }
     }
 
-    $execParams = $($extension.parameters)
     $execParams
 
     Write-Host "Executing custom PS script $($extension.path) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
