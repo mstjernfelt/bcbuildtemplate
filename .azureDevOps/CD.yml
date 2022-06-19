@@ -25,9 +25,11 @@ parameters:
   default: ''
 
 stages:
-- stage: Deployment
+- stage: Release
+  displayName: Create Release
   jobs:
   - job: Build
+    displayName: Create Release
     timeoutInMinutes: 360
     cancelTimeoutInMinutes: 10
     variables:      
@@ -74,9 +76,7 @@ stages:
         targetType: filePath
         filePath: 'bcbuildtemplate\scripts\Deploy-App.ps1'
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Pipeline.Workspace)/self-pipe/${{ parameters.appVersion }}" -branchName "$(resources.pipeline.self-pipe.sourceBranch)"'
-  - job: 'ReleaseNote'
-    displayName: Generate Release Note
-    steps:
+    
     - task: richardfennellBM.BM-VSTS-XplatGenerateReleaseNotes.XplatGenerate-Release-Notes.XplatGenerateReleaseNotes@3
       displayName: 'Create Release Note'
       condition: ne('${{ parameters.releasenoteTemplateFilePath }}','')
