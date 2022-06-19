@@ -43,7 +43,7 @@ stages:
       path: 's'
 
     - checkout: Template
-      clean: false
+      clean: true
       path: 's\bcbuildtemplate'
 
     - task: printAllVariables@1
