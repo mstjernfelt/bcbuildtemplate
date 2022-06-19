@@ -74,10 +74,6 @@ stages:
         targetType: filePath
         filePath: 'bcbuildtemplate\scripts\Deploy-App.ps1'
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Pipeline.Workspace)/self-pipe/${{ parameters.appVersion }}" -branchName "$(resources.pipeline.self-pipe.sourceBranch)"'
-    
-- stage: ReleaseNote
-  displayName: Release Note
-  jobs:
   - job: 'ReleaseNote'
     displayName: Generate Release Note
     steps:
