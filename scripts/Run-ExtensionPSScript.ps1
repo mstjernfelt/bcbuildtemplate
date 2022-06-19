@@ -14,7 +14,9 @@ if (Test-Path $ExtensionScript) {
 foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script $($extension.path)"
 
-    $execParams = $($extension.parameters)
+    $execParams = $extension.parameters | ConvertFrom-Json
+
+    $execParams
 
     if ($extension.TaskName -ne $ENV:SYSTEM_TASKDISPLAYNAME) {
         Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($ENV:SYSTEM_TASKDISPLAYNAME))"
