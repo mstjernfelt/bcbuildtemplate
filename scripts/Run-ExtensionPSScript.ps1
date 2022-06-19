@@ -17,8 +17,8 @@ foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script from $extension.URI"
 
     Write-Host "extension.TaskName: $($extension.TaskName)"
-    Write-Host "system.taskDisplayName: $($system.taskDisplayName)"
-    Write-Host "system.taskInstanceName: $($system.taskInstanceName)"   
+    Write-Host "system.taskDisplayName: $($ENV:system_taskDisplayName)"
+    Write-Host "system.taskInstanceName: $($ENV:system_taskInstanceName)"   
 
     if ($extension.TaskName -ne $system.taskDisplayName) {
         Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($system.taskDisplayName))"
