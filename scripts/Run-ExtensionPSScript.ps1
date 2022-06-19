@@ -38,7 +38,7 @@ foreach ($extension in $settings.scriptExtension) {
         }
     }
 
-    $execParams
+    Write-Host $execParams
 
     Write-Host "Executing custom PS script $($extension.path) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
     . $ExtensionScript -parameters $execParams
