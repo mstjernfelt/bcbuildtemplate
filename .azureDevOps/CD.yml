@@ -46,6 +46,8 @@ stages:
       clean: false
       path: 's\bcbuildtemplate'
 
+    - task: printAllVariables@1
+
     - task: PowerShell@2
       displayName: 'Copy Build Template'
       inputs:
@@ -74,11 +76,13 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Pipeline.Workspace)/self-pipe/${{ parameters.appVersion }}" -branchName "$(resources.pipeline.self-pipe.sourceBranch)"'
     
 - stage: ReleaseNote
+  displayName: Release Note
   jobs:
   - job: 'ReleaseNote'
+    displayName: Generate Release Note
     steps:
     - task: richardfennellBM.BM-VSTS-XplatGenerateReleaseNotes.XplatGenerate-Release-Notes.XplatGenerateReleaseNotes@3
-      displayName: 'Generate Release Notes'
+      displayName: 'Create Release Note'
       condition: ne(${{ parameters.releasenoteTemplateFilePath }},'')
       inputs:
         outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
@@ -92,7 +96,15 @@ stages:
         stopOnError: true
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifacts'
+      displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: "$(Build.ArtifactStagingDirectory)"
         ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
+
+    - task: PowerShell@2
+      displayName: 'OnAfterPublishArtifact'
+      inputs:
+        targetType: filePath
+        filePath: 'bcbuildtemplate\scripts\Get-ExtensionPSScript.ps1'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
+        failOnStderr: true
