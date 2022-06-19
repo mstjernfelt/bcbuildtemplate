@@ -35,9 +35,7 @@ foreach ($extension in $settings.scriptExtension) {
         }
     }
 
-    $parameters = @{}
-    ($extension.parameters).psobject.properties | ForEach-Object{$parameters[$_.Name]= $_.Value}
-    $parameters
+    $parameters = $extension.parameters | ConvertFrom-Json
 
     Write-Host "Executing custom PS script $($extension.path) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
     . $ExtensionScript $parameters
