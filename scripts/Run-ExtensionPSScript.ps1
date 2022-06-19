@@ -16,12 +16,8 @@ Write-Host "Executing custom Powershell script."
 foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script from $extension.URI"
 
-    Write-Host "extension.TaskName: $($extension.TaskName)"
-    Write-Host "system.taskDisplayName: $($ENV:system_taskDisplayName)"
-    Write-Host "system.taskInstanceName: $($ENV:system_taskInstanceName)"   
-
-    if ($extension.TaskName -ne $system.taskDisplayName) {
-        Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($system.taskDisplayName))"
+    if ($extension.TaskName -ne $ENV:SYSTEM_TASKDISPLAYNAME) {
+        Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($ENV:SYSTEM_TASKDISPLAYNAME))"
         continue
     }
 
