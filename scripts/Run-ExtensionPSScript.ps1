@@ -1,7 +1,5 @@
 Param(
     [Parameter(Mandatory = $true)]
-    [string] $taskName,
-    [Parameter(Mandatory = $true)]
     [string] $configurationFilePath
 )
 
