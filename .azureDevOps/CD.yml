@@ -48,6 +48,14 @@ stages:
       clean: true
       path: 's\bcbuildtemplate'
 
+    - task: PowerShell@2
+      displayName: 'OnAfterGenerateReleaseNote'
+      condition: succeeded()
+      inputs:
+        targetType: filePath
+        filePath: 'bcbuildtemplate\scripts\Run-ExtensionPSScript.ps1'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
+
     - task: printAllVariables@1
 
     - task: PowerShell@2
@@ -90,14 +98,6 @@ stages:
         replaceFile: True
         checkForManuallyLinkedWI: True
         stopOnError: true
-
-    - task: PowerShell@2
-      displayName: 'OnAfterGenerateReleaseNote'
-      condition: succeeded()
-      inputs:
-        targetType: filePath
-        filePath: 'bcbuildtemplate\scripts\Run-ExtensionPSScript.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Release Note Artifact'
