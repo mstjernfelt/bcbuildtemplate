@@ -11,10 +11,10 @@ if (Test-Path $ExtensionScript) {
     Remove-Item $ExtensionScript
   }
 
-Write-Host $settings.scriptExtension -ForegroundColor Green
-
 foreach ($extension in $settings.scriptExtension) {
     Write-Host "Fetching custom script $($extension.path)"
+
+    Write-Host $extension.parameters
 
     if ($extension.TaskName -ne $ENV:SYSTEM_TASKDISPLAYNAME) {
         Write-Host "No custom PS script matches TaskName $($extension.TaskName) ($($ENV:SYSTEM_TASKDISPLAYNAME))"
