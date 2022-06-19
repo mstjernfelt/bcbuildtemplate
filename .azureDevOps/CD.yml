@@ -99,7 +99,7 @@ stages:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-        ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
+        ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).html"
 
     - task: PowerShell@2
       displayName: 'OnAfterPublishArtifact'
