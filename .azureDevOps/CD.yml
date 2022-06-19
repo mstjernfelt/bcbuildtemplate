@@ -83,7 +83,7 @@ stages:
     steps:
     - task: richardfennellBM.BM-VSTS-XplatGenerateReleaseNotes.XplatGenerate-Release-Notes.XplatGenerateReleaseNotes@3
       displayName: 'Create Release Note'
-      condition: ne(${{ parameters.releasenoteTemplateFilePath }},'')
+      condition: ne('${{ parameters.releasenoteTemplateFilePath }}'','')
       inputs:
         outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).html"
         templatefile: "$(Build.Repository.LocalPath)/${{ parameters.releasenoteTemplateFilePath }}"
