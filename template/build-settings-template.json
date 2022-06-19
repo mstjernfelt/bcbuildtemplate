@@ -121,16 +121,13 @@
     ],
     "scriptExtension": [
         {
-            "URI": "C:\\BrightCom\\DevOps\\mstjernfelt\\Lab\\BCS Base\\.azureDevOps\\Extension.ps1",
+            "URI": "C:\\BrightCom\\DevOps\\mstjernfelt\\BCS Base\\BCS Base\\.azureDevOps\\Extensions\\PublishTowikJS\\PublishTowikJS.ps1",
             "parameters": [
                 {
                     "value": "https://docs.brightcom.se/graphql"
                 },
                 {
-                    "value": "C:\\temp\\releasenote.html"
-                },
-                {
-                    "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGkiOjIsImdycCI6MSwiaWF0IjoxNjU1MjE0ODA0LCJleHAiOjE3NDk4ODc2MDQsImF1ZCI6InVybjp3aWtpLmpzIiwiaXNzIjoidXJuOndpa2kuanMifQ.SKsHdeYUnqmvxRidZ_WtZ0XRLIo3H66P1MfjwnqKr3YPKHN9dBsaS_x1ld0ZRShX1HHJ8DCIqsGspKwdCg8NmWbRlY0MhqTYiEnA_zpMCAH5ns9fqIhd18u1tF0JlJWu5pSvaNEmSKxSL1oYAHwWt9qpGNUrN5PMfJCfPYkfCjLfeH5UalF-r2DEqU58mVZ3dkrQJOcAOnuQ19vzkXgXsx5gl4Hp0EjpXqCjYmXk8Pu_ZPIo2dP5Zgt64XzsJYuwb3-SRaUGgjLBxV8jHO-LfPgF0yQFVurMhox-okM-zcCU05fhKrt4W_F2I3mCVFzDs5AXGuJ3s5a3E4Oecbjd_A"
+                    "value": "C:\\BrightCom\\GitHub\\rfennel\\AzurePipelines\\Extensions\\XplatGenerateReleaseNotes\\V3\\testconsole\\output.html"
                 }
             ]
         }
