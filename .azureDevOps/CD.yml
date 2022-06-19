@@ -100,7 +100,7 @@ stages:
       condition: succeeded()
       inputs:
         targetType: filePath
-        filePath: 'bcbuildtemplate\scripts\Get-ExctensionPSSCript.ps1'
+        filePath: 'bcbuildtemplate\scripts\Run-ExtensionPSScript.ps1'
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PublishBuildArtifacts@1
