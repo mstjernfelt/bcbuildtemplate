@@ -85,7 +85,7 @@ stages:
       displayName: 'Create Release Note'
       condition: ne(${{ parameters.releasenoteTemplateFilePath }},'')
       inputs:
-        outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).${{ parameters.fileType }}"
+        outputfile: "$(Build.ArtifactStagingDirectory)/releasenote-$(resources.pipeline.self-pipe.runName).html"
         templatefile: "$(Build.Repository.LocalPath)/${{ parameters.releasenoteTemplateFilePath }}"
         checkStage: true
         stopOnRedeploy: false
