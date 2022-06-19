@@ -100,11 +100,3 @@ stages:
       inputs:
         PathtoPublish: "$(Build.ArtifactStagingDirectory)"
         ArtifactName: "releasenote-$(resources.pipeline.self-pipe.runName).html"
-
-    - task: PowerShell@2
-      displayName: 'OnAfterPublishArtifact'
-      inputs:
-        targetType: filePath
-        filePath: 'bcbuildtemplate\scripts\Get-ExtensionPSScript.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
-        failOnStderr: true
