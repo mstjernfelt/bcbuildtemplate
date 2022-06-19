@@ -37,6 +37,8 @@ foreach ($extension in $settings.scriptExtension) {
 
     Write-Host $extension['parameters'].GetType()
 
+    $PSVersionTable.PSVersion
+
     Write-Host "Executing custom PS script $($extension['path']) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
     . $ExtensionScript $extension['parameters']
 }
