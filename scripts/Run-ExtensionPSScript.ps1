@@ -35,9 +35,9 @@ foreach ($extension in $settings.scriptExtension) {
         }
     }
 
-    $excetionParams = $($extension.parameters)
-    Write-Host "Params : $excetionParams"
+    $execParams = $($extension.parameters)
+    $execParams
 
     Write-Host "Executing custom PS script $($extension.path) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
-    . $ExtensionScript -parameters $excetionParams
+    . $ExtensionScript -parameters $execParams
 }
