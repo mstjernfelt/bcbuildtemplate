@@ -3,6 +3,8 @@ Param(
     [string] $configurationFilePath
 )
 
+$PSVersionTable.PSVersion
+
 $settings = (Get-Content -Path $configurationFilePath -Encoding UTF8 | Out-String | ConvertFrom-Json -AsHashtable)
 
 $ExtensionScript = Join-Path $env:TEMP 'ExtensionScript.ps1'
@@ -36,8 +38,6 @@ foreach ($extension in $settings.scriptExtension) {
     }
 
     Write-Host $extension['parameters'].GetType()
-
-    $PSVersionTable.PSVersion
 
     Write-Host "Executing custom PS script $($extension['path']) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
     . $ExtensionScript $extension['parameters']
