@@ -49,7 +49,12 @@ stages:
       path: 's\bcbuildtemplate'
 
     - task: PowerShell@2
-      displayName: 'OnBeforeCopyBuildTemplate'
+      displayName: 'PS Version'
+      condition: succeeded()
+      inlineScript: $PSVersionTable
+
+    - task: PowerShell@2
+      displayName: '> OnBeforeCopyBuildTemplate'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -57,7 +62,6 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: printAllVariables@1
-
 
     - task: PowerShell@2
       displayName: 'Copy Build Template'
@@ -68,7 +72,7 @@ stages:
         failOnStderr: true
 
     - task: PowerShell@2
-      displayName: 'OnAfterCopyBuildTemplate'
+      displayName: '> OnAfterCopyBuildTemplate'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -76,7 +80,7 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PowerShell@2
-      displayName: 'OnBeforeReadSettings'
+      displayName: '> OnBeforeReadSettings'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -92,7 +96,7 @@ stages:
         failOnStderr: true
 
     - task: PowerShell@2
-      displayName: 'OnAfterReadSettings'
+      displayName: '> OnAfterReadSettings'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -100,7 +104,7 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PowerShell@2
-      displayName: 'OnBeforeDownloadBuildArtifacts'
+      displayName: '> OnBeforeDownloadBuildArtifacts'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -111,7 +115,7 @@ stages:
       displayName: 'Download build artifacts'
 
     - task: PowerShell@2
-      displayName: 'OnAfterDownloadBuildArtifacts'
+      displayName: '> OnAfterDownloadBuildArtifacts'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -119,7 +123,7 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PowerShell@2
-      displayName: 'OnBeforeDeploytoEnvironment'
+      displayName: '> OnBeforeDeploytoEnvironment'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -135,7 +139,7 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Pipeline.Workspace)/self-pipe/${{ parameters.appVersion }}" -branchName "$(resources.pipeline.self-pipe.sourceBranch)"'
 
     - task: PowerShell@2
-      displayName: 'OnAfterDeploytoEnvironment'
+      displayName: '> OnAfterDeploytoEnvironment'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -143,7 +147,7 @@ stages:
         arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}"'
 
     - task: PowerShell@2
-      displayName: 'OnBeforeGenerateReleaseNote'
+      displayName: '> OnBeforeGenerateReleaseNote'
       condition: succeeded()
       inputs:
         targetType: filePath
@@ -165,7 +169,7 @@ stages:
         stopOnError: true
 
     - task: PowerShell@2
-      displayName: 'OnAfterGenerateReleaseNote'
+      displayName: '> OnAfterGenerateReleaseNote'
       condition: succeeded()
       inputs:
         targetType: filePath
