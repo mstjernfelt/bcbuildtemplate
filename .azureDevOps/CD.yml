@@ -51,7 +51,10 @@ stages:
     - task: PowerShell@2
       displayName: 'PS Version'
       condition: succeeded()
-      inlineScript: $PSVersionTable
+      inputs:
+        targetType: 'inline'
+        script: |
+          $PSVersionTable
 
     - task: PowerShell@2
       displayName: '> OnBeforeCopyBuildTemplate'
