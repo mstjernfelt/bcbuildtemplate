@@ -36,7 +36,5 @@ foreach ($extension in $settings.scriptExtension) {
 
     Write-Host "Executing custom PS script $($extension.path) on task $($ENV:SYSTEM_TASKDISPLAYNAME)"
 
-    $env:ExtensionScriptParams = $extension.parameters | ConvertTo-Json
-
-    . $ExtensionScript
+    . $ExtensionScript -parameters $extension.parameters
 }
