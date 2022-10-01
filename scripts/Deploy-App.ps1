@@ -61,8 +61,6 @@ foreach ($deployment in $deployments) {
         $appJsonFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\app.json")).FullName
         $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
-        Write-Host "appFile: $appFile"
-
         if ($deploymentType -eq "onlineTenant") {
             $environment = $deployment.DeployToName;
             foreach ($tenantId in $deployment.DeployToTenants) {
@@ -334,22 +332,28 @@ foreach ($deployment in $deployments) {
                     $sessionArgument = @{ }
                 }
     
+                Write-Host "appFile: $appFile"
+
                 Invoke-Command @sessionArgument -ScriptBlock { Param($Tenants, $appFile, $DeployToInstance, $installNewApps)
                     $ErrorActionPreference = "Stop"
     
                     if ([String]::IsNullOrEmpty($DeployToInstance)) {
                         $modulePath = Get-Item 'C:\Program Files\Microsoft Dynamics 365 Business Central\*\Service\NavAdminTool.ps1'
+                        Write-Host "modulePath: $modulePath"
                         Import-Module $modulePath | Out-Null
                         $ServerInstance = (Get-NAVServerInstance | Where-Object -Property Default -EQ True).ServerInstance
                     }
                     else {
                         $ServicePath = (Get-WmiObject win32_service | Where-Object { $_.Name -eq "MicrosoftDynamicsNavServer`$${DeployToInstance}" } | Select-Object Name, DisplayName, @{Name = "Path"; Expression = { $_.PathName.split('"')[1] } }).Path
+                        Write-Host "ServicePath: $ServicePath"
                         $modulePath = Get-Item (Join-Path (Split-Path -Path $ServicePath -Parent) 'NavAdminTool.ps1')
+                        Write-Host "modulePath: $modulePath"
                         Import-Module $modulePath | Out-Null
                         $ServerInstance = $DeployToInstance
                     }
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
-
+                    Write-Host "CurrentApp: $CurrentApp"
+                    
                     foreach ($Tenant in $Tenants) {
                         Write-Host "Publishing $($CurrentApp.Name) (${appFile}) to ${Tenant}"
                         Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $false | ForEach-Object {
