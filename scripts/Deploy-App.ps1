@@ -61,6 +61,8 @@ foreach ($deployment in $deployments) {
         $appJsonFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\app.json")).FullName
         $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
+        Write-Host "appFile: $appFile"
+
         if ($deploymentType -eq "onlineTenant") {
             $environment = $deployment.DeployToName;
             foreach ($tenantId in $deployment.DeployToTenants) {
