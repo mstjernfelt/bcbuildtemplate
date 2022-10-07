@@ -240,12 +240,12 @@ foreach ($deployment in $deployments) {
                     Write-Host "Publishing v$($CurrentApp.Version)"    
                     Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
                 
-                    foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
+                    foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) { 
+                        
+                        Write-Host "--------------------------------------------------------------------------"
+
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
 
-                        $apps | Format-Table
-
-                        Write-Host "----------------------------------------------------------------------"
                         foreach ($app in $apps | Sort-Object -Property Version) {
                             Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled) on tenant $($Tenant)"
 
@@ -268,15 +268,17 @@ foreach ($deployment in $deployments) {
                                     Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
                                 }
                                 else {
-                                    Write-Host "app $($app.Name) v$($NewApp.Version) in tenant $($Tenant) has not been automatically installed."
+                                    Write-Host "app $($app.Name) vv$($app.Version) in tenant $($Tenant) has not been automatically installed."
                                 }
                             }
                     
                             $allTenantsApps = @()
-                            foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {
-                                $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
+                            foreach ($Tenant2 in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {
+                                $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant2 -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
                             }
+
                             $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Name $CurrentApp.Name | Where-Object -Property Scope -EQ Global
+                            
                             foreach ($app in $apps | Sort-Object -Property Version) {
                                 $NoOfApps = @($apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.Version).Count
                                 $NoOfInstalledApps = @($allTenantsApps | Where-Object -Property Version -EQ $app.Version).Count
