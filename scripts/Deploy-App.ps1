@@ -61,6 +61,13 @@ foreach ($deployment in $deployments) {
         $appJsonFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\app.json")).FullName
         $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
+        if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
+            $UpgradePublishedApps = $true
+        }
+        else {
+            $UpgradePublishedApps = $false
+        }
+
         if ($deploymentType -eq "onlineTenant") {
             $environment = $deployment.DeployToName;
             foreach ($tenantId in $deployment.DeployToTenants) {
@@ -174,8 +181,7 @@ foreach ($deployment in $deployments) {
             }
         
         }
-
-        elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0) {
+        elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0 -and $UpgradePublishedApps) {
             $VM = $deployment.DeployToName
             if ($deployment.InstallNewApps) {
                 $installNewApps = $true
