@@ -22,7 +22,6 @@
 
     [Parameter(Mandatory = $false)]
     $PowerShellPassword = $ENV:PowerShellPassword
-    
 )
 
 Write-Host "Deploying apps from ${artifactsFolder} to branch ${branchName} ..."
@@ -39,7 +38,7 @@ if ($PowerShellUsername -is [string]) {
 $appFolders = $settings.appFolders
 $deployments = @()
 $deployments += $settings.deployments | Where-Object { $_.branch -eq $branchName }
-$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1)}
+$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1) }
 foreach ($deployment in $deployments) {
     $deploymentType = $deployment.DeploymentType
     if (($deployment.reason).Count -gt 0) {
@@ -54,7 +53,6 @@ foreach ($deployment in $deployments) {
     $vmSession = $null
 
     Sort-AppFoldersByDependencies -appFolders $appFolders.Split(',') -baseFolder $artifactsFolder -WarningAction SilentlyContinue | ForEach-Object {
-        
         $appFolder = $_
         Write-Host "Deploying ${appFolder} to ${deploymentType}"
         $appFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\*.app")).FullName
@@ -174,7 +172,6 @@ foreach ($deployment in $deployments) {
             }
         
         }
-
         elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0) {
             $VM = $deployment.DeployToName
             if ($deployment.InstallNewApps) {
@@ -183,6 +180,14 @@ foreach ($deployment in $deployments) {
             else {
                 $installNewApps = $false
             }
+
+            if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
+                $UpgradePublishedApps = $true
+            }
+            else {
+                $UpgradePublishedApps = $false
+            }
+
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
     
@@ -198,7 +203,6 @@ foreach ($deployment in $deployments) {
                 
             $tempAppFile = ""
             try {
-    
                 if ($useSession) {
                     if ($vmSession -eq $null) {
                         if ($vmCredential) {
@@ -239,45 +243,50 @@ foreach ($deployment in $deployments) {
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
                         foreach ($app in $apps | Sort-Object -Property Version) {
-                            Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled)"
+                            Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled) on tenant $($Tenant)"
                             $NewApp = $apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.version                            
                             if ($NewApp) {
-                                if (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true) {
+                                if ($UpgradePublishedApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true)) {
                                     Write-Host "upgrading app $($app.Name) v$($app.Version) to v$($NewApp.Version) in tenant $($Tenant)"
                                     Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
                                     Start-NAVAppDataUpgrade -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
                                 }
                                 else {
-                                    Write-Host "Newer App is available"
+                                    Write-Host "app $($app.Name) in tenant $($Tenant) has not been automatically upgraded from v$($app.Version) to v$($NewApp.Version)."
                                 }
                             }
-                            elseif ($installNewApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -EQ $app.Version | Where-Object -Property IsInstalled -EQ $false)) {
-                                Write-Host "installing app $($app.Name) v$($app.Version) in tenant $($Tenant)"
-                                Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
-                                Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
-                            }                   
-                        }
+                            else {
+                                if ($installNewApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -EQ $app.Version | Where-Object -Property IsInstalled -EQ $false)) {
+                                    Write-Host "installing app $($app.Name) v$($app.Version) in tenant $($Tenant)"
+                                    Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                                    Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                                }
+                                else {
+                                    Write-Host "app $($app.Name) v$($NewApp.Version) in tenant $($Tenant) has not been automatically installed."
+                                }
+                            }
                     
-                        $allTenantsApps = @()
-                        foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {
-                            $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
-                        }
-                        $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Name $CurrentApp.Name | Where-Object -Property Scope -EQ Global
-                        foreach ($app in $apps | Sort-Object -Property Version) {
-                            $NoOfApps = @($apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.Version).Count
-                            $NoOfInstalledApps = @($allTenantsApps | Where-Object -Property Version -EQ $app.Version).Count
-                            if ($NoOfApps -gt 0 -and $NoOfInstalledApps -eq 0) {
-                                Write-Host "Unpublishing old app $($app.Name) $($app.Version)"
-                                try {
-                                    Unpublish-NAVApp -ServerInstance $ServerInstance -Name $app.Name -Publisher $app.Publisher -Version $app.Version
-                                }
-                                catch {
-                                    Write-Host "Unable to unpublish $($app.Name) v$($app.Version)"
+                            $allTenantsApps = @()
+                            foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {
+                                $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
+                            }
+                            $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Name $CurrentApp.Name | Where-Object -Property Scope -EQ Global
+                            foreach ($app in $apps | Sort-Object -Property Version) {
+                                $NoOfApps = @($apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.Version).Count
+                                $NoOfInstalledApps = @($allTenantsApps | Where-Object -Property Version -EQ $app.Version).Count
+                                if ($NoOfApps -gt 0 -and $NoOfInstalledApps -eq 0) {
+                                    Write-Host "Unpublishing old app $($app.Name) $($app.Version)"
+                                    try {
+                                        Unpublish-NAVApp -ServerInstance $ServerInstance -Name $app.Name -Publisher $app.Publisher -Version $app.Version
+                                    }
+                                    catch {
+                                        Write-Host "Unable to unpublish $($app.Name) v$($app.Version)"
+                                    }
                                 }
                             }
                         }
-                    }
-                } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
+                    } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
+                }
             }
             catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
                 throw "Could not connect to $VM. Maybe port 5985 (WinRM) is not open for your IP address $myip"
@@ -299,6 +308,14 @@ foreach ($deployment in $deployments) {
             else {
                 $installNewApps = $false
             }
+
+            if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
+                $UpgradePublishedApps = $true
+            }
+            else {
+                $UpgradePublishedApps = $false
+            }
+            
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
     
@@ -364,23 +381,28 @@ foreach ($deployment in $deployments) {
             
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
                         foreach ($app in $apps | Sort-Object -Property Version) {
-                            Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled)"
+                            Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled) on tenant $($Tenant)"
                             $NewApp = $apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.version                            
                             if ($NewApp) {
-                                if (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true) {
+                                if ($UpgradePublishedApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true)) {
                                     Write-Host "upgrading app $($app.Name) v$($app.Version) to v$($NewApp.Version) in tenant $($Tenant)"
                                     Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
                                     Start-NAVAppDataUpgrade -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
                                 }
                                 else {
-                                    Write-Host "Newer App is available"
+                                    Write-Host "app $($app.Name) in tenant $($Tenant) has not been automatically upgraded from v$($app.Version) to v$($NewApp.Version)."
                                 }
                             }
-                            elseif ($installNewApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -EQ $app.Version | Where-Object -Property IsInstalled -EQ $false)) {
-                                Write-Host "installing app $($app.Name) v$($app.Version) in tenant $($Tenant)"
-                                Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
-                                Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
-                            }                   
+                            else {
+                                if ($installNewApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -EQ $app.Version | Where-Object -Property IsInstalled -EQ $false)) {
+                                    Write-Host "installing app $($app.Name) v$($app.Version) in tenant $($Tenant)"
+                                    Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                                    Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                                }
+                                else {
+                                    Write-Host "app $($app.Name) v$($NewApp.Version) in tenant $($Tenant) has not been automatically installed."
+                                }
+                            }                 
                         }
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
                         foreach ($app in $apps | Sort-Object -Property Version) {
@@ -417,7 +439,5 @@ foreach ($deployment in $deployments) {
     }
     if ($vmSession) {
         Remove-PSSession -Session $vmSession    
+    }
 }
-
-}
-
