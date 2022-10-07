@@ -237,7 +237,7 @@ foreach ($deployment in $deployments) {
                         $ServerInstance = $DeployToInstance
                     }
                     Write-Host "Imported NavAdminTools"
-                    
+
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
                     Write-Host "Publishing v$($CurrentApp.Version)"    
@@ -287,9 +287,9 @@ foreach ($deployment in $deployments) {
                                     }
                                 }
                             }
-                        }
-                    } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
-                }
+                        } 
+                    }
+                } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
             }
             catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
                 throw "Could not connect to $VM. Maybe port 5985 (WinRM) is not open for your IP address $myip"
