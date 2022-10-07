@@ -219,7 +219,9 @@ foreach ($deployment in $deployments) {
                     $tempAppFile = $appFile
                     $sessionArgument = @{ }
                 }
-    
+
+                Write-Host "App File to deploy $($tempAppFile)"
+
                 Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps)
                     $ErrorActionPreference = "Stop"
     
@@ -234,6 +236,7 @@ foreach ($deployment in $deployments) {
                         Import-Module $modulePath | Out-Null
                         $ServerInstance = $DeployToInstance
                     }
+                    Write-Host "Imported NavAdminTools"
                     
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
