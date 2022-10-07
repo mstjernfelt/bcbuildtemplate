@@ -290,6 +290,111 @@ foreach ($deployment in $deployments) {
                 }                
             }
         }
+        elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0 -and -not $UpgradePublishedApps) {
+            $VM = $deployment.DeployToName
+            if ($deployment.InstallNewApps) {
+                $installNewApps = $true
+            }
+            else {
+                $installNewApps = $false
+            }
+            Write-Host "Host deployment to ${VM}"
+            . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
+    
+            $useSession = $true
+            try { 
+                $myip = ""; $myip = (Invoke-WebRequest -Uri http://ifconfig.me/ip).Content
+                $targetip = (Resolve-DnsName $VM).IP4Address
+                if ($myip -eq $targetip) {
+                    $useSession = $false
+                }
+            }
+            catch { }
+                
+            $tempAppFile = ""
+            try {
+    
+                if ($useSession) {
+                    if ($vmSession -eq $null) {
+                        if ($vmCredential) {
+                            $vmSession = New-DeploymentRemoteSession -HostName $VM  -Credential $vmCredential
+                        }
+                        else {
+                            $vmSession = New-DeploymentRemoteSession -HostName $VM
+                        }
+                    }
+                    $tempAppFile = CopyFileToSession -session $vmSession -localFile $appFile
+                    $sessionArgument = @{ "Session" = $vmSession }
+                }
+                else {
+                    $tempAppFile = $appFile
+                    $sessionArgument = @{ }
+                }
+    
+                Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps)
+                    $ErrorActionPreference = "Stop"
+    
+                    if ([String]::IsNullOrEmpty($DeployToInstance)) {
+                        $modulePath = Get-Item 'C:\Program Files\Microsoft Dynamics 365 Business Central\*\Service\NavAdminTool.ps1'
+                        Import-Module $modulePath | Out-Null
+                        $ServerInstance = (Get-NAVServerInstance | Where-Object -Property Default -EQ True).ServerInstance
+                    }
+                    else {
+                        $ServicePath = (Get-WmiObject win32_service | Where-Object { $_.Name -eq "MicrosoftDynamicsNavServer`$${DeployToInstance}" } | Select-Object Name, DisplayName, @{Name = "Path"; Expression = { $_.PathName.split('"')[1] } }).Path
+                        $modulePath = Get-Item (Join-Path (Split-Path -Path $ServicePath -Parent) 'NavAdminTool.ps1')
+                        Import-Module $modulePath | Out-Null
+                        $ServerInstance = $DeployToInstance
+                    }
+                    
+                    $CurrentApp = Get-NAVAppInfo -Path $appFile
+
+                    Write-Host "Publishing v$($CurrentApp.Version)"    
+                    Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
+                
+                    foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
+                        $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
+                        foreach ($app in $apps | Sort-Object -Property Version) {
+                            Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled)"
+                            
+                            if ($installNewApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -EQ $app.Version | Where-Object -Property IsInstalled -EQ $false)) {
+                                Write-Host "installing app $($app.Name) v$($app.Version) in tenant $($Tenant)"
+                                Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                                Install-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $app.Name -Version $app.Version -Force
+                            }                   
+                        }
+                    
+                        $allTenantsApps = @()
+                        foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {
+                            $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
+                        }
+                        $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Name $CurrentApp.Name | Where-Object -Property Scope -EQ Global
+                        foreach ($app in $apps | Sort-Object -Property Version) {
+                            $NoOfApps = @($apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.Version).Count
+                            $NoOfInstalledApps = @($allTenantsApps | Where-Object -Property Version -EQ $app.Version).Count
+                            if ($NoOfApps -gt 0 -and $NoOfInstalledApps -eq 0) {
+                                Write-Host "Unpublishing old app $($app.Name) $($app.Version)"
+                                try {
+                                    Unpublish-NAVApp -ServerInstance $ServerInstance -Name $app.Name -Publisher $app.Publisher -Version $app.Version
+                                }
+                                catch {
+                                    Write-Host "Unable to unpublish $($app.Name) v$($app.Version)"
+                                }
+                            }
+                        }
+                    }
+                } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
+            }
+            catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
+                throw "Could not connect to $VM. Maybe port 5985 (WinRM) is not open for your IP address $myip"
+            }
+            finally {
+                if ($vmSession) {
+                    if ($tempAppFile) {
+                        try { RemoveFileFromSession -session $vmSession -filename $tempAppFile } catch {}
+                    }                    
+                }                
+            }
+        }
         elseif ($deploymentType -eq "host") {
             $VM = $deployment.DeployToName
             $Tenants = $deployment.DeployToTenants
