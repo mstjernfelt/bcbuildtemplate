@@ -188,6 +188,8 @@ foreach ($deployment in $deployments) {
                 $UpgradePublishedApps = $false
             }
 
+            Write-Host "UpgradePublishedApps = $($UpgradePublishedApps)"
+
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
     
@@ -277,26 +279,12 @@ foreach ($deployment in $deployments) {
                                 $allTenantsApps += Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant2 -TenantSpecificProperties -Name $CurrentApp.Name | Where-Object -Property IsInstalled -EQ $true
                             }
 
-                            Write-Host ">> ***********************************************************"
-                            Write-Host $allTenantsApps | Format-Table
-                            Write-Host "<< ***********************************************************"
-
                             $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Name $CurrentApp.Name | Where-Object -Property Scope -EQ Global
-
-                            Write-Host ">> ***********************************************************"
-                            Write-Host $apps | Format-Table
-                            Write-Host "<< ***********************************************************"
 
                             foreach ($app in $apps | Sort-Object -Property Version) {
                                 $NoOfApps = @($apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.Version).Count
-                                Write-Host ">> ***********************************************************"
-                                Write-Host $NoOfApps | Format-Table
-                                Write-Host "<< ***********************************************************"
 
                                 $NoOfInstalledApps = @($allTenantsApps | Where-Object -Property Version -EQ $app.Version).Count
-                                Write-Host ">> ***********************************************************"
-                                Write-Host $NoOfInstalledApps | Format-Table
-                                Write-Host "<< ***********************************************************"
 
                                 if ($NoOfApps -gt 0 -and $NoOfInstalledApps -eq 0) {
                                     Write-Host "Unpublishing old app $($app.Name) $($app.Version)"
