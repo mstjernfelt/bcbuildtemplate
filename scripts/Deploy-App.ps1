@@ -183,16 +183,14 @@ foreach ($deployment in $deployments) {
 
             Write-Host "InstallNewApps = $($installNewApps)"
 
-            $UpgradePublishedApps = $true
-
-            if ($deployment.UpgradePublishedApps) {
+            if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
                 $UpgradePublishedApps = $true
             }
             else {
                 $UpgradePublishedApps = $false
             }
 
-            Write-Host "InstallNewApps = $($UpgradePublishedApps)"
+            Write-Host "UpgradePublishedApps = $($UpgradePublishedApps)"
 
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
@@ -321,6 +319,8 @@ foreach ($deployment in $deployments) {
                 $installNewApps = $false
             }
 
+            Write-Host "installNewApps = $($installNewApps)"
+
             $UpgradePublishedApps = $true
 
             if ($deployment.UpgradePublishedApps) {
@@ -330,7 +330,7 @@ foreach ($deployment in $deployments) {
                 $UpgradePublishedApps = $false
             }
 
-            Write-Host "InstallNewApps = $($UpgradePublishedApps)"
+            Write-Host "UpgradePublishedApps = $($UpgradePublishedApps)"
             
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
