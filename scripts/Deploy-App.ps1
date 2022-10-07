@@ -181,12 +181,18 @@ foreach ($deployment in $deployments) {
                 $installNewApps = $false
             }
 
-            if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
+            Write-Host "InstallNewApps = $($installNewApps)"
+
+            $UpgradePublishedApps = $true
+
+            if ($deployment.UpgradePublishedApps) {
                 $UpgradePublishedApps = $true
             }
             else {
                 $UpgradePublishedApps = $false
             }
+
+            Write-Host "InstallNewApps = $($UpgradePublishedApps)"
 
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
@@ -245,9 +251,12 @@ foreach ($deployment in $deployments) {
                 
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
+                        Write-Host "----------------------------------------------------------------------"
                         foreach ($app in $apps | Sort-Object -Property Version) {
                             Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled) on tenant $($Tenant)"
+
                             $NewApp = $apps | Where-Object -Property Name -EQ $app.Name | Where-Object -Property Version -GT $app.version                            
+                            
                             if ($NewApp) {
                                 if ($UpgradePublishedApps -and (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true)) {
                                     Write-Host "upgrading app $($app.Name) v$($app.Version) to v$($NewApp.Version) in tenant $($Tenant)"
@@ -312,12 +321,16 @@ foreach ($deployment in $deployments) {
                 $installNewApps = $false
             }
 
-            if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
+            $UpgradePublishedApps = $true
+
+            if ($deployment.UpgradePublishedApps) {
                 $UpgradePublishedApps = $true
             }
             else {
                 $UpgradePublishedApps = $false
             }
+
+            Write-Host "InstallNewApps = $($UpgradePublishedApps)"
             
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
