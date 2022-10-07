@@ -81,7 +81,8 @@
             "DeployToTenants": [
                 "<blank for all tenants>"
             ],
-            "InstallNewApps": false
+            "InstallNewApps": false,
+            "UpgradePublishedApps": false
         },
         {
             "branch": "<disabled>",

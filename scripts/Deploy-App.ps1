@@ -39,7 +39,7 @@ if ($PowerShellUsername -is [string]) {
 $appFolders = $settings.appFolders
 $deployments = @()
 $deployments += $settings.deployments | Where-Object { $_.branch -eq $branchName }
-$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1)}
+$deployments += $settings.deployments | Where-Object { $_.branch -eq ($branchName.split('/') | Select-Object -Last 1) }
 foreach ($deployment in $deployments) {
     $deploymentType = $deployment.DeploymentType
     if (($deployment.reason).Count -gt 0) {
@@ -54,7 +54,6 @@ foreach ($deployment in $deployments) {
     $vmSession = $null
 
     Sort-AppFoldersByDependencies -appFolders $appFolders.Split(',') -baseFolder $artifactsFolder -WarningAction SilentlyContinue | ForEach-Object {
-        
         $appFolder = $_
         Write-Host "Deploying ${appFolder} to ${deploymentType}"
         $appFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\*.app")).FullName
@@ -174,7 +173,6 @@ foreach ($deployment in $deployments) {
             }
         
         }
-
         elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0) {
             $VM = $deployment.DeployToName
             if ($deployment.InstallNewApps) {
@@ -182,6 +180,13 @@ foreach ($deployment in $deployments) {
             }
             else {
                 $installNewApps = $false
+            }
+
+            if ($deployment.UpgradePublishedApps) {
+                $UpgradePublishedApps = $true
+            }
+            else {
+                $UpgradePublishedApps = $false
             }
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
@@ -236,6 +241,7 @@ foreach ($deployment in $deployments) {
                     Write-Host "Publishing v$($CurrentApp.Version)"    
                     Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Global -SkipVerification
                 
+                    if($UpgradePublishedApps) {
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
                         foreach ($app in $apps | Sort-Object -Property Version) {
@@ -277,6 +283,7 @@ foreach ($deployment in $deployments) {
                             }
                         }
                     }
+                }
                 } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
             }
             catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
@@ -417,7 +424,7 @@ foreach ($deployment in $deployments) {
     }
     if ($vmSession) {
         Remove-PSSession -Session $vmSession    
-}
+    }
 
 }
 
