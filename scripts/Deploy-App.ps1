@@ -181,16 +181,12 @@ foreach ($deployment in $deployments) {
                 $installNewApps = $false
             }
 
-            Write-Host "InstallNewApps = $($installNewApps)"
-
             if (($deployment.UpgradePublishedApps -eq $true) -or [String]::IsNullOrEmpty(($deployment.UpgradePublishedApps))) {
                 $UpgradePublishedApps = $true
             }
             else {
                 $UpgradePublishedApps = $false
             }
-
-            Write-Host "UpgradePublishedApps = $($UpgradePublishedApps)"
 
             Write-Host "Host deployment to ${VM}"
             . (Join-Path $PSScriptRoot "SessionFunctions.ps1")
@@ -224,8 +220,6 @@ foreach ($deployment in $deployments) {
                     $sessionArgument = @{ }
                 }
 
-                Write-Host "App File to deploy $($tempAppFile)"
-
                 Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps)
                     $ErrorActionPreference = "Stop"
     
@@ -240,7 +234,6 @@ foreach ($deployment in $deployments) {
                         Import-Module $modulePath | Out-Null
                         $ServerInstance = $DeployToInstance
                     }
-                    Write-Host "Imported NavAdminTools"
 
                     $CurrentApp = Get-NAVAppInfo -Path $appFile
 
@@ -249,6 +242,9 @@ foreach ($deployment in $deployments) {
                 
                     foreach ($Tenant in (Get-NAVTenant -ServerInstance $ServerInstance).Id) {                                      
                         $apps = Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $CurrentApp.Name
+
+                        $apps | Format-Table
+
                         Write-Host "----------------------------------------------------------------------"
                         foreach ($app in $apps | Sort-Object -Property Version) {
                             Write-Host "Investigating app $($app.Name) v$($app.version) installed=$($app.isInstalled) on tenant $($Tenant)"
