@@ -68,6 +68,8 @@ foreach ($deployment in $deployments) {
             $UpgradePublishedApps = $false
         }
 
+        Write-Host "$UpgradePublishedApps = $($UpgradePublishedApps)"
+
         if ($deploymentType -eq "onlineTenant") {
             $environment = $deployment.DeployToName;
             foreach ($tenantId in $deployment.DeployToTenants) {
@@ -181,7 +183,7 @@ foreach ($deployment in $deployments) {
             }
         
         }
-        elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0 -and $UpgradePublishedApps) {
+        elseif (($deploymentType -eq "host") -and (($deployment.DeployToTenants).Count -eq 0) -and ($UpgradePublishedApps)) {
             $VM = $deployment.DeployToName
             if ($deployment.InstallNewApps) {
                 $installNewApps = $true
@@ -296,7 +298,7 @@ foreach ($deployment in $deployments) {
                 }                
             }
         }
-        elseif ($deploymentType -eq "host" -and ($deployment.DeployToTenants).Count -eq 0 -and -not $UpgradePublishedApps) {
+        elseif (($deploymentType -eq "host") -and (($deployment.DeployToTenants).Count -eq 0) -and (-not $UpgradePublishedApps)) {
             $VM = $deployment.DeployToName
             if ($deployment.InstallNewApps) {
                 $installNewApps = $true
