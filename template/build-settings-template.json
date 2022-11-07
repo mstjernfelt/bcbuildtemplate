@@ -11,6 +11,7 @@
     "testToolkitCountry": "is-IS",
     "testCompanyName": "CRONUS Danmark A/S",
     "testSuiteDisabled": false,
+    "keepTestApp": false,
     "containerParameters": {
         "locale": "",
         "AuthenticationEmail": "",

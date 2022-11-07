@@ -54,6 +54,10 @@ $testFolders = $settings.testFolders
 Write-Host "Set testFolders = $testFolders"
 Write-Host "##vso[task.setvariable variable=testFolders]$testFolders"
 
+$testFolders = $settings.keepTestApp
+Write-Host "Set keepTestApp = $keepTestApp"
+Write-Host "##vso[task.setvariable variable=keepTestApp]$keepTestApp"
+
 $property = $settings.PSObject.Properties.Match('azureBlob')
 if ($property.Value) {
     $branches = $settings.azureBlob.PSObject.Properties.Match('BranchNames')
