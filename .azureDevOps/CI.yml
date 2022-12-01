@@ -19,6 +19,10 @@ parameters:
   displayName: 'Specifies the path to the build-settings.json file'
   type: string
   default: '.azureDevOps\build-settings.json'
+- name: releaseAppAzureStorageFolderName
+  displayName: 'Specifies the name of the folder to save Release Apps on Azure Blob Storage'
+  type: string
+  default: ''
 
 stages:
 - stage: Build
@@ -227,7 +231,7 @@ stages:
         Destination: AzureBlob
         storage: '$(azureStorageAccount)'
         ContainerName: '$(azureContainerName)'
-        BlobPrefix: '$(Build.Repository.Name)\$(Build.SourceBranchName)\${{ parameters.appVersion }}\${{ parameters.version }}'
+        BlobPrefix: '${{ parameters.configurationFilePath }}\$(Build.Repository.Name)\$(Build.SourceBranchName)\${{ parameters.appVersion }}\${{ parameters.version }}'
 
     - task: AzureFileCopy@4
       displayName: 'Copy Artifact Apps to Azure Blob'
