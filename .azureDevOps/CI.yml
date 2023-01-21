@@ -71,7 +71,7 @@ stages:
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
-        arguments: '-SyncAppMode ${{ parameters.SyncAppMode }} -configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)"'
+        arguments: '-SyncAppMode "${{ parameters.SyncAppMode }} -configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)"'
         failOnStderr: true
     
     - task: PowerShell@2

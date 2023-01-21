@@ -16,10 +16,13 @@ Param(
     [string] $appVersion = "",
 
     [Parameter(Mandatory = $true)]
-    [string] $branchName
+    [string] $branchName,
+
+    [Parameter(Mandatory = $true)]
+    [string] $SyncAppMode = "None"
 )
 
-Write-Host "Sync App Mode $env:SyncAppMode"
+Write-Host "Sync App Mode $SyncAppMode"
 
 if ($appVersion) {
     Write-Host "Updating build number to $appVersion"
