@@ -59,6 +59,12 @@ stages:
       clean: false
       path: 's\bcbuildtemplate'
 
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Hello World: ${{ parameters.SyncAppMode }}"      
+
     - task: printAllVariables@1
 
     - task: PowerShell@2
@@ -70,9 +76,6 @@ stages:
         failOnStderr: true
 
     - task: PowerShell@2
-      env:
-        ${{ each parameter in parameters }}:
-          ${{ parameter.Key }}: ${{ parameter.Value }}    
       displayName: 'Reading Settings'
       inputs:
         targetType: filePath
