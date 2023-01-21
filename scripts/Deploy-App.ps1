@@ -373,7 +373,9 @@ foreach ($deployment in $deployments) {
                             if ($NewApp) {
                                 if (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true) {
                                     Write-Host "upgrading app $($app.Name) v$($app.Version) to v$($NewApp.Version) in tenant $($Tenant)"
-                                    Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force -Mode $SyncAppMode
+
+                                    Write-Host "Sync-NAVApp -ServerInstance $($ServerInstance) -Tenant $($Tenant) -Name $($NewApp.Name) -Version $($NewApp.Version) -Mode $($SyncAppMode) -Force"
+                                    Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Mode $SyncAppMode -Force
                                     Start-NAVAppDataUpgrade -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
                                 }
                                 else {
