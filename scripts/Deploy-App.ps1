@@ -23,7 +23,7 @@
     [Parameter(Mandatory = $false)]
     $PowerShellPassword = $ENV:PowerShellPassword,
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string] $SyncAppMode = "None"
     
 )
