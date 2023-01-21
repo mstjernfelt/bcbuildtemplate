@@ -19,6 +19,8 @@ Param(
     [string] $branchName
 )
 
+Write-Host $variables.SyncAppMode
+
 if ($appVersion) {
     Write-Host "Updating build number to $appVersion"
     write-host "##vso[build.updatebuildnumber]$appVersion"
