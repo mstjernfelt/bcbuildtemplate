@@ -60,14 +60,6 @@ stages:
       path: 's\bcbuildtemplate'
 
     - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          Write-Host "Hello World: ${{ parameters.SyncAppMode }}"      
-
-    - task: printAllVariables@1
-
-    - task: PowerShell@2
       displayName: 'Copy Build Template'
       inputs:
         targetType: filePath
@@ -80,7 +72,7 @@ stages:
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
-        arguments: '-SyncAppMode ${{ parameters.SyncAppMode }} -configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)"'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -appVersion "${{ parameters.appVersion }}.$(appBuild).$(appRevision)" -version ${{ parameters.version }} -branchName "$(Build.SourceBranch)"'
         failOnStderr: true
     
     - task: PowerShell@2
@@ -337,5 +329,5 @@ stages:
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Deploy-App.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Build.ArtifactStagingDirectory)" -branchName "$(Build.SourceBranch)"'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Build.ArtifactStagingDirectory)" -branchName "$(Build.SourceBranch) -SyncAppMode ${{ parameters.SyncAppMode }}"'
         failOnStderr: true
