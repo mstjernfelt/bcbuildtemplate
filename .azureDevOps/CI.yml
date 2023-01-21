@@ -57,7 +57,7 @@ stages:
       path: 's\bcbuildtemplate'
 
     - task: printAllVariables@1
-    
+
     - task: PowerShell@2
       displayName: 'Copy Build Template'
       inputs:
@@ -68,7 +68,6 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Reading Settings'
-      pwsh: true
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
