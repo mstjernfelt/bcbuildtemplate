@@ -19,7 +19,7 @@ Param(
     [string] $branchName
 )
 
-Write-Host "Sync App Mode $($parameters.SyncAppMode)"
+Write-Host "Sync App Mode $($env:SyncAppMode)"
 
 if ($appVersion) {
     Write-Host "Updating build number to $appVersion"
