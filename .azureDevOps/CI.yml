@@ -53,6 +53,10 @@ stages:
       path: 's\bcbuildtemplate'
 
     - task: printAllVariables@1
+      env:
+        ${{ each parameter in parameters }}:
+          ${{ parameter.Key }}: ${{ parameter.Value }}    
+
 
     - task: PowerShell@2
       displayName: 'Copy Build Template'
