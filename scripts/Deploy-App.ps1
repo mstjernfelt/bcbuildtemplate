@@ -29,6 +29,8 @@
 )
 
 Write-Host "Deploying apps from ${artifactsFolder} to branch ${branchName} ..."
+Write-Host "NAV App Sync mode is set to $SyncAppMode"
+
 $settings = (Get-Content -Path $configurationFilePath -Encoding UTF8 | Out-String | ConvertFrom-Json)
 if ($clientId -is [string]) {
     if ($clientSecret -is [String]) { $clientSecret = ConvertTo-SecureString -String $clientSecret -AsPlainText -Force }
