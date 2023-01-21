@@ -220,7 +220,7 @@ foreach ($deployment in $deployments) {
                     $sessionArgument = @{ }
                 }
     
-                Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps)
+                Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps, $SyncAppMode)
                     $ErrorActionPreference = "Stop"
     
                     if ([String]::IsNullOrEmpty($DeployToInstance)) {
@@ -281,7 +281,7 @@ foreach ($deployment in $deployments) {
                             }
                         }
                     }
-                } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps
+                } -ArgumentList $tempAppFile, $deployment.DeployToInstance, $installNewApps, $SyncAppMode
             }
             catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
                 throw "Could not connect to $VM. Maybe port 5985 (WinRM) is not open for your IP address $myip"
@@ -336,7 +336,7 @@ foreach ($deployment in $deployments) {
                     $sessionArgument = @{ }
                 }
     
-                Invoke-Command @sessionArgument -ScriptBlock { Param($Tenants, $appFile, $DeployToInstance, $installNewApps)
+                Invoke-Command @sessionArgument -ScriptBlock { Param($Tenants, $appFile, $DeployToInstance, $installNewApps, $SyncAppMode)
                     $ErrorActionPreference = "Stop"
     
                     if ([String]::IsNullOrEmpty($DeployToInstance)) {
@@ -406,7 +406,7 @@ foreach ($deployment in $deployments) {
                             }
                         }         
                     }
-                } -ArgumentList $Tenants, $tempAppFile, $deployment.DeployToInstance, $installNewApps
+                } -ArgumentList $Tenants, $tempAppFile, $deployment.DeployToInstance, $installNewApps, $SyncAppMode
             }
             catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
                 throw "Could not connect to $VM. Maybe port 5985 (WinRM) is not open for your IP address $myip"
