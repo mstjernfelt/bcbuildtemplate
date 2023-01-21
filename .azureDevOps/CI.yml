@@ -30,9 +30,9 @@ parameters:
 - name: SyncAppMode
   displayName: Publish Sync-NAVApp Mode
   type: string
-  default: None
+  default: Add
   values:
-  - None
+  - Add
   - ForceSync
 
 stages:
@@ -335,5 +335,5 @@ stages:
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Deploy-App.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Build.ArtifactStagingDirectory)" -branchName "$(Build.SourceBranch) -SyncAppMode ${{ parameters.SyncAppMode }}"'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}" -artifactsFolder "$(Build.ArtifactStagingDirectory)" -branchName "$(Build.SourceBranch)" -SyncAppMode ${{ parameters.SyncAppMode }}'
         failOnStderr: true
