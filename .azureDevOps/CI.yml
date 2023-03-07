@@ -135,6 +135,16 @@ stages:
         failOnStderr: true
 
     - task: PowerShell@2
+      displayName: 'Publish Previous Build Artifact'
+      env:
+        LicenseFile: $(LicenseFile)
+      inputs:
+        targetType: filePath
+        filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Publish-PrevBuildArtifact.ps1'
+        arguments: '-appFolders "$(appFolders)" -skipVerification:([String]::IsNullOrEmpty($CodeSignPfxPassword)) -licenseFile "$(LicenseFile)"'
+        failOnStderr: true
+
+    - task: PowerShell@2
       displayName: 'Compile App'
       env:
         Password: $(Password)
