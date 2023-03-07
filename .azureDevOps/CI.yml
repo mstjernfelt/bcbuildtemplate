@@ -82,6 +82,9 @@ stages:
         script: |
           Write-Host "SyncAppMode: ${{ parameters.SyncAppMode }}"  
 
+    - task: printAllVariables@1
+      displayName: 'Print All Variables'
+
     - task: PowerShell@2
       displayName: 'Copy Build Template'
       inputs:
