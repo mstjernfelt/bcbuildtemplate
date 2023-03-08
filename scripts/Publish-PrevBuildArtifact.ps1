@@ -38,39 +38,46 @@ $authInfo = $ENV:DEVOPSUSERNAME + ":" + $ENV:DEVOPSPAT
 $encodedAuthInfo = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($authInfo))
 
 $headers.Add("Authorization", "Basic " + $encodedAuthInfo)
-$headers.Add("Cookie", "VstsSession=%7B%22PersistentSessionId%22%3A%220bea08cd-0e83-4afd-bc1f-6778bff9b093%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D")
 
 # Get pipeline last run
-$response = Invoke-RestMethod "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/pipelines/$($Env:SYSTEM_DEFINITIONID)/runs?api-version=7.1-preview.1" -Method "GET" -Headers $headers
+$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/pipelines/$($Env:SYSTEM_DEFINITIONID)/runs?api-version=7.1-preview.1"
+Write-Host "Finding last pipeline run: $($apiURL)"
+$response = Invoke-RestMethod $apiUrl -Method "GET" -Headers $headers
 $lastRun = $response.value | Sort-Object id -Descending | Where-Object result -ne "failed" | Select-Object -First 1 id, name, result
 
 # Get Artifact Name
-$response = Invoke-RestMethod "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?api-version=4.1" -Method "GET" -Headers $headers
+$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?api-version=4.1"
+Write-Host "Setting Artifact Name: $($apiURL)"
+$response = Invoke-RestMethod $apiURL -Method "GET" -Headers $headers
 $artifactName = $response.value.name
 
 # Download artifact ZIP
-$destinationDirectory = "$($artifactstagingdirectory)\$(New-Guid)"
+$zipFileDestinationDirectory = "$($artifactstagingdirectory)\$(New-Guid)"
 
-if (-not (Test-Path $destinationDirectory)) {
-    New-Item -ItemType Directory -Path $destinationDirectory | Out-Null
+if (-not (Test-Path $zipFileDestinationDirectory)) {
+    New-Item -ItemType Directory -Path $zipFileDestinationDirectory | Out-Null
 }
 
-$zipFile = "$($destinationDirectory)\artifact$($response.value.name).zip"
-$response = Invoke-RestMethod "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?artifactName=$($artifactName)&api-version=4.1&%24format=zip" -Method "GET" -Headers $headers
-
-$url = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?artifactName=$($artifactName)&api-version=4.1&%24format=zip"
-
+$zipFile = "$($zipFileDestinationDirectory)\artifact$($response.value.name).zip"
+$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?artifactName=$($artifactName)&api-version=4.1&%24format=zip"
+Write-Host "Downloading Artifact Archive to $($zipFile): $($apiURL)"
 $webClient = New-Object System.Net.WebClient
 $webClient.Headers.Add("Authorization", "Basic " + $encodedAuthInfo)
-$webClient.DownloadFile($url, $zipFile)
+$webClient.DownloadFile($apiUrl, $zipFile)
 
-Expand-Archive -Path $zipFile -DestinationPath $destinationDirectory -Force
+Write-Host "Expanding Artifact Archice $($zipFile) to $($zipFileDestinationDirectory)"
+Expand-Archive -Path $zipFile -DestinationPath $zipFileDestinationDirectory -Force
 
 $appFolders.Split(',') | ForEach-Object {
-    $appsFolder = Join-Path "$($destinationDirectory)\$($artifactName)" $_
+    $appsFolder = Join-Path "$($zipFileDestinationDirectory)\$($artifactName)" $_
+
+    Write-Host "Searching for App Files in $($appsFolder)"
 
     Get-ChildItem -Path $appsFolder -Filter "*.app" | ForEach-Object {
         $appFile = "$($appsFolder)\$($_)"
+        Write-Host "Publishing Artifact: Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification:$skipVerification -sync -install"
         Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification:$skipVerification -sync -install
     }
 }
+
+Write-Host "Publish previous build artifact successed."
