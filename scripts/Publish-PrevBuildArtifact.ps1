@@ -43,10 +43,10 @@ $headers.Add("Authorization", "Basic " + $encodedAuthInfo)
 $apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/pipelines/$($Env:SYSTEM_DEFINITIONID)/runs?api-version=7.1-preview.1"
 Write-Host "Finding last pipeline run: $($apiURL)"
 $response = Invoke-RestMethod $apiUrl -Method "GET" -Headers $headers
-$lastRun = $response.value | Sort-Object id -Descending | Where-Object result -ne "failed" | Select-Object -First 1 id, name, result
+$lastSucceededRun = $response.value | Sort-Object id -Descending | Where-Object result -eq "succeeded" | Select-Object -First 1 id, name, result
 
 # Get Artifact Name
-$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?api-version=4.1"
+$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastSucceededRun.id)/artifacts?api-version=4.1"
 Write-Host "Setting Artifact Name: $($apiURL)"
 $response = Invoke-RestMethod $apiURL -Method "GET" -Headers $headers
 $artifactName = $response.value.name
@@ -59,7 +59,7 @@ if (-not (Test-Path $zipFileDestinationDirectory)) {
 }
 
 $zipFile = "$($zipFileDestinationDirectory)\artifact$($response.value.name).zip"
-$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastRun.id)/artifacts?artifactName=$($artifactName)&api-version=4.1&%24format=zip"
+$apiUrl = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$($ENV:SYSTEM_TEAMPROJECT)/_apis/build/builds/$($lastSucceededRun.id)/artifacts?artifactName=$($artifactName)&api-version=4.1&%24format=zip"
 Write-Host "Downloading Artifact Archive to $($zipFile): $($apiURL)"
 $webClient = New-Object System.Net.WebClient
 $webClient.Headers.Add("Authorization", "Basic " + $encodedAuthInfo)
