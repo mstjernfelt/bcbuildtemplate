@@ -34,7 +34,7 @@ $artifactstagingdirectory = $buildArtifactFolder
 $systemdefinitionId = $Env:SYSTEM_DEFINITIONID
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-authInfo = $ENV:DEVOPSUSERNAME + ":" + $ENV:DEVOPSPAT
+$authInfo = $ENV:DEVOPSUSERNAME + ":" + $ENV:DEVOPSPAT
 $encodedAuthInfo = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($authInfo))
 
 $headers.Add("Authorization", "Basic " + $encodedAuthInfo)
