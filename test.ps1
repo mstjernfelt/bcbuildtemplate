@@ -8,7 +8,7 @@ $systemdefinitionId = "43"
 $appFolders = "App"
 $containerName = "myContainer"
 $ENVDevOpsUsername = ""
-$ENVDevOpsPAT = "rqszjubez5ltaiafk3uxfigpjhjdcwntwntn2wtai2pkzcb4g2rq"
+$ENVDevOpsPAT = ""
 $systemteamFoundationCollectionUri = "https://dev.azure.com/mstjernfelt/"
 $systemteamProject = "Lab"
 
