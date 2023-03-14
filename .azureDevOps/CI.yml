@@ -136,6 +136,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'Publish Previous Build Artifact'
+      condition: and(succeeded(),ne(variables['publishPreviousVersion'],'True'),ne(variables['reuseContainer'],'True'))
       env:
         LicenseFile: $(LicenseFile)
       inputs:

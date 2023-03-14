@@ -76,7 +76,17 @@ $appFolders.Split(',') | ForEach-Object {
     Get-ChildItem -Path $appsFolder -Filter "*.app" | ForEach-Object {
         $appFile = "$($appsFolder)\$($_)"
         Write-Host "Publishing Artifact: Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification:$skipVerification -sync -install"
-        Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification:$skipVerification -sync -install
+        
+        if (Get-NAVAppInfo -ServerInstance $ServerInstance -Tenant $Tenant -TenantSpecificProperties | Where-Object -Property Name -EQ $Newapp.Name | Where-Object -Property Version -LT $Newapp.Version | Where-Object -Property IsInstalled -EQ $true) {
+            Write-Host "upgrading app $($app.Name) v$($app.Version) to v$($NewApp.Version) in tenant $($Tenant)"
+
+            Write-Host "Sync-NAVApp -ServerInstance $($ServerInstance) -Tenant $($Tenant) -Name $($NewApp.Name) -Version $($NewApp.Version) -Mode $($SyncAppMode) -Force"
+            Sync-NAVApp -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Mode $SyncAppMode -Force
+            Start-NAVAppDataUpgrade -ServerInstance $ServerInstance -Tenant $Tenant -Name $NewApp.Name -Version $NewApp.Version -Force
+        } else {
+            Publish-BCContainerApp -containerName $containerName -appFile $appFile -skipVerification:$skipVerification -sync -install
+            
+        }
     }
 }
 
