@@ -27,58 +27,58 @@
     [bool] $reuseContainer = ($ENV:REUSECONTAINER -eq "True")
 )
 
-# Gets License from Private Azure Storage Conatiner and saves it temporarily 
-Function Get-LicenseFileFromPrivateAzureStorage {
-    param(
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$LicenseFileUri,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_tenantId,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_clientId,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_clientSecret
-    )
+# # Gets License from Private Azure Storage Conatiner and saves it temporarily 
+# Function Get-LicenseFileFromPrivateAzureStorage {
+#     param(
+#         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+#         [String]$LicenseFileUri,
+#         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+#         [String]$az_storage_tenantId,
+#         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+#         [String]$az_storage_clientId,
+#         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+#         [String]$az_storage_clientSecret
+#     )
 
-    Write-Host "LicenseFileUri:          $LicenseFileUri"
-    Write-Host "az_storage_tenantId:     $az_storage_tenantId"
-    Write-Host "az_storage_clientId:     $az_storage_clientId"
-    Write-Host "az_storage_clientSecret: $az_storage_clientSecret"
+#     Write-Host "LicenseFileUri:          $LicenseFileUri"
+#     Write-Host "az_storage_tenantId:     $az_storage_tenantId"
+#     Write-Host "az_storage_clientId:     $az_storage_clientId"
+#     Write-Host "az_storage_clientSecret: $az_storage_clientSecret"
 
-    $tokenUrl = "https://login.microsoftonline.com/$az_storage_tenantId/oauth2/token"
+#     $tokenUrl = "https://login.microsoftonline.com/$az_storage_tenantId/oauth2/token"
 
-    $tokenParams = @{
-        grant_type    = "client_credentials"
-        client_id     = $az_storage_clientId
-        client_secret = $az_storage_clientSecret
-        resource      = "https://storage.azure.com"
-    }
+#     $tokenParams = @{
+#         grant_type    = "client_credentials"
+#         client_id     = $az_storage_clientId
+#         client_secret = $az_storage_clientSecret
+#         resource      = "https://storage.azure.com"
+#     }
 
-    $tokenResponse = Invoke-RestMethod -Method POST -Uri $tokenUrl -ContentType "application/x-www-form-urlencoded" -Body $tokenParams
-    $accessToken = $tokenResponse.access_token
+#     $tokenResponse = Invoke-RestMethod -Method POST -Uri $tokenUrl -ContentType "application/x-www-form-urlencoded" -Body $tokenParams
+#     $accessToken = $tokenResponse.access_token
 
-    if (-not [string]::IsNullOrEmpty($accessToken)) {
-        $headers = @{
-            Authorization  = "Bearer $accessToken"
-            "x-ms-version" = "2017-11-09"
-        }
-        try {
-            $TempFile = New-TemporaryFile
-            $response = Invoke-RestMethod -Method Get -Uri $LicenseFileUri -Headers $headers
-            $response | Out-File -FilePath $TempFile
+#     if (-not [string]::IsNullOrEmpty($accessToken)) {
+#         $headers = @{
+#             Authorization  = "Bearer $accessToken"
+#             "x-ms-version" = "2017-11-09"
+#         }
+#         try {
+#             $TempFile = New-TemporaryFile
+#             $response = Invoke-RestMethod -Method Get -Uri $LicenseFileUri -Headers $headers
+#             $response | Out-File -FilePath $TempFile
 
-            Write-Host "Succsessfully downloaded file $($LicenseFileUri) from Azure Storage Container"
+#             Write-Host "Succsessfully downloaded file $($LicenseFileUri) from Azure Storage Container"
 
-            return($TempFile)
-        }
-        catch {
-            Write-Host "An error occurred while downloading $($LicenseFileUri): $($_.Exception.Message)"
-        }
-    }
-    else {
-        Write-Host "Failed to retrieve access token from $tokenUrl."
-    }
-}
+#             return($TempFile)
+#         }
+#         catch {
+#             Write-Host "An error occurred while downloading $($LicenseFileUri): $($_.Exception.Message)"
+#         }
+#     }
+#     else {
+#         Write-Host "Failed to retrieve access token from $tokenUrl."
+#     }
+# }
 
 if (-not ($artifact)) {
     if ($ENV:ARTIFACTURL) {
