@@ -104,6 +104,10 @@ if ($licenseFile) {
     }
 }
 
+if ($parameter.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
+    $parameter.licenseFile = Get-LicenseFileFromPrivateAzureStorage($parameter.licenseFile)
+ }
+
 if ($buildenv -eq "Local") {
     $workspaceFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
     $additionalParameters = @("--volume ""${workspaceFolder}:C:\Source""") 
@@ -210,5 +214,51 @@ if (!$restoreDb) {
     
     if ($reuseContainer) {
         Backup-BCContainerDatabases -containerName $containerName -bakFolder $containerName
+    }
+}
+
+# Gets License from Private Azure Storage Conatiner and saves it temporarily 
+Function Get-LicenseFileFromPrivateAzureStorage {
+    param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [String]$LicenseFileUri
+    )
+
+    $tenantId = $ENV:AZ_STORAGE_TENANTID
+    $clientId = $ENV:AZ_STORAGE_CLIENTID
+    $clientSecret = $ENV:AZ_STORAGE_CLIENTSECRET
+
+    $tokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+
+    $tokenParams = @{
+        grant_type    = "client_credentials"
+        client_id     = $clientId
+        client_secret = $clientSecret
+        resource      = "https://storage.azure.com"
+    }
+
+    $tokenResponse = Invoke-RestMethod -Method POST -Uri $tokenUrl -ContentType "application/x-www-form-urlencoded" -Body $tokenParams
+    $accessToken = $tokenResponse.access_token
+
+    if (-not [string]::IsNullOrEmpty($accessToken)) {
+        $headers = @{
+            Authorization  = "Bearer $accessToken"
+            "x-ms-version" = "2017-11-09"
+        }
+        try {
+            $tempPath = Get-TemporaryFile
+            $response = Invoke-RestMethod -Method Get -Uri $LicenseFileUri -Headers $headers
+            $response | Out-File -FilePath $tempPath
+
+            Write-Host "Succsessfully downloaded file $($LicenseFileUri) from Azure Storage Container"
+
+            return($tempPath)
+        }
+        catch {
+            Write-Host "An error occurred while downloading $($LicenseFileUri): $($_.Exception.Message)"
+        }
+    }
+    else {
+        Write-Host "Failed to retrieve access token from $tokenUrl."
     }
 }
