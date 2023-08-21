@@ -27,11 +27,12 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
         $headers = @{
             Authorization  = "Bearer $accessToken"
             "x-ms-version" = "2017-11-09"
+            ContentType  = "text/plain"
         }
         try {
             $TempFile = New-TemporaryFile
             $response = Invoke-RestMethod -Method Get -Uri $blobUri -Headers $headers
-            Set-Content -Path $TempFile -Value $response
+            Set-Content -Path $TempFile -Value $response -NoNewline
 
             Write-Host "Successfully downloaded $($blobUri) from Azure Storage Container to $($TempFile)"
 
