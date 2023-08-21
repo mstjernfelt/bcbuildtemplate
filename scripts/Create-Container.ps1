@@ -24,9 +24,6 @@
     [Parameter(Mandatory = $false)]
     [securestring] $licenseFile = $null,
 
-    [Parameter(Mandatory = $false)]
-    [securestring] $azStorageClientSecret = $null,
-
     [bool] $reuseContainer = ($ENV:REUSECONTAINER -eq "True")
 )
 
@@ -160,10 +157,10 @@ if ($licenseFile) {
     }
 }
 
-if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $azStorageClientSecret -ne "") {
+if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
     Write-Host "Downloading License file $($parameters.licenseFile) from Azure Storage"
 
-    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $azStorageClientSecret
+    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
 
     Write-Host "Downloaded license file to $($parameter.licenseFile)"
  }

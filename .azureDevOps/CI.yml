@@ -116,10 +116,11 @@ stages:
         Password: $(Password)
         LicenseFile: $(LicenseFile)
         InsiderSasToken: $(InsiderSasToken)
+        az_storage_clientSecret: $(az_storage_clientSecret)
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Create-Container.ps1'
-        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }} -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET"'
+        arguments: '-configurationFilePath "$(Build.Repository.LocalPath)\${{ parameters.configurationFilePath }}'
         failOnStderr: true
 
     - task: PowerShell@2
