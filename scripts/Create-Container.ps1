@@ -107,7 +107,7 @@ if ($licenseFile) {
 }
 
 if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
-    $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+    $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
  }
 
 if ($buildenv -eq "Local") {
