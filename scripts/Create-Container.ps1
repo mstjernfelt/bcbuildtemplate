@@ -157,13 +157,13 @@ if ($licenseFile) {
     }
 }
 
-if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $env:az_storage_clientSecret -ne "") {
-    Write-Host "Downloading License file $($parameters.licenseFile) from Azure Storage"
+# if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $env:az_storage_clientSecret -ne "") {
+#     Write-Host "Downloading License file $($parameters.licenseFile) from Azure Storage"
 
-    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $env:az_storage_clientSecret
+#     $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $env:az_storage_clientSecret
 
-    Write-Host "Downloaded license file to $($parameter.licenseFile)"
- }
+#     Write-Host "Downloaded license file to $($parameter.licenseFile)"
+#  }
 
 if ($buildenv -eq "Local") {
     $workspaceFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
