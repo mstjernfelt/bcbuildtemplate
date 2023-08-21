@@ -150,14 +150,14 @@ if ($licenseFile) {
     }
 }
 
-if ($parameter.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
+if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
     Write-Host "AZ_STORAGE_TENANTID:     $ENV:AZ_STORAGE_TENANTID"
     Write-Host "AZ_STORAGE_CLIENTID:     $ENV:AZ_STORAGE_CLIENTID"
     Write-Host "AZ_STORAGE_CLIENTSECRET: $ENV:AZ_STORAGE_CLIENTSECRET"
 
     Write-Host "Downloading License file $($parameter.licenseFile) from Azure Storage"
 
-    $parameter.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameter.licenseFile
+    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile
 
     Write-Host "Downloaded license file to $($parameter.licenseFile)"
  }
