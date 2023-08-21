@@ -30,7 +30,7 @@
 # Gets License from Private Azure Storage Conatiner and saves it temporarily 
 Function Get-LicenseFileFromPrivateAzureStorage {
     param(
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
         [String]$LicenseFileUri
     )
 
