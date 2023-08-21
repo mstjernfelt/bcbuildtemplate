@@ -31,19 +31,26 @@
 Function Get-LicenseFileFromPrivateAzureStorage {
     param(
         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$LicenseFileUri
+        [String]$LicenseFileUri,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+        [String]$az_storage_tenantId,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+        [String]$az_storage_clientId,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
+        [String]$az_storage_clientSecret
     )
 
-    $tenantId = $ENV:AZ_STORAGE_TENANTID
-    $clientId = $ENV:AZ_STORAGE_CLIENTID
-    $clientSecret = $ENV:AZ_STORAGE_CLIENTSECRET
+    Write-Host "LicenseFileUri:          $LicenseFileUri"
+    Write-Host "az_storage_tenantId:     $az_storage_tenantId"
+    Write-Host "az_storage_clientId:     $az_storage_clientId"
+    Write-Host "az_storage_clientSecret: $az_storage_clientSecret"
 
-    $tokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+    $tokenUrl = "https://login.microsoftonline.com/$az_storage_tenantId/oauth2/token"
 
     $tokenParams = @{
         grant_type    = "client_credentials"
-        client_id     = $clientId
-        client_secret = $clientSecret
+        client_id     = $az_storage_clientId
+        client_secret = $az_storage_clientSecret
         resource      = "https://storage.azure.com"
     }
 
@@ -151,13 +158,9 @@ if ($licenseFile) {
 }
 
 if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
-    Write-Host "AZ_STORAGE_TENANTID:     $ENV:AZ_STORAGE_TENANTID"
-    Write-Host "AZ_STORAGE_CLIENTID:     $ENV:AZ_STORAGE_CLIENTID"
-    Write-Host "AZ_STORAGE_CLIENTSECRET: $ENV:AZ_STORAGE_CLIENTSECRET"
+    Write-Host "Downloading License file $($parameters.licenseFile) from Azure Storage"
 
-    Write-Host "Downloading License file $($parameter.licenseFile) from Azure Storage"
-
-    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile
+    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
 
     Write-Host "Downloaded license file to $($parameter.licenseFile)"
  }
