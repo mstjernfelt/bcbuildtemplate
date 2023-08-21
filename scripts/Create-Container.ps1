@@ -105,7 +105,10 @@ if ($licenseFile) {
 }
 
 if ($parameter.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
-    $parameter.licenseFile = Get-LicenseFileFromPrivateAzureStorage($parameter.licenseFile)
+    Write-Host "Downloading License file from Azure Storage"
+    $parameter.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameter.licenseFile
+
+    Write-Host "Downloaded license file to $($parameter.licenseFile)"
  }
 
 if ($buildenv -eq "Local") {
