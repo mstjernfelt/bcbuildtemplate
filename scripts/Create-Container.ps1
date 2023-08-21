@@ -24,6 +24,9 @@
     [Parameter(Mandatory = $false)]
     [securestring] $licenseFile = $null,
 
+    [Parameter(Mandatory = $false)]
+    [securestring] $azStorageClientSecret = $null,
+
     [bool] $reuseContainer = ($ENV:REUSECONTAINER -eq "True")
 )
 
@@ -63,13 +66,13 @@ Function Get-LicenseFileFromPrivateAzureStorage {
             "x-ms-version" = "2017-11-09"
         }
         try {
-            $tempPath = Get-TemporaryFile
+            $TempFile = New-TemporaryFile
             $response = Invoke-RestMethod -Method Get -Uri $LicenseFileUri -Headers $headers
-            $response | Out-File -FilePath $tempPath
+            $response | Out-File -FilePath $TempFile
 
             Write-Host "Succsessfully downloaded file $($LicenseFileUri) from Azure Storage Container"
 
-            return($tempPath)
+            return($TempFile)
         }
         catch {
             Write-Host "An error occurred while downloading $($LicenseFileUri): $($_.Exception.Message)"
@@ -157,10 +160,10 @@ if ($licenseFile) {
     }
 }
 
-if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
+if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $azStorageClientSecret -ne "") {
     Write-Host "Downloading License file $($parameters.licenseFile) from Azure Storage"
 
-    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+    $parameters.licenseFile = Get-LicenseFileFromPrivateAzureStorage -LicenseFileUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $azStorageClientSecret
 
     Write-Host "Downloaded license file to $($parameter.licenseFile)"
  }
