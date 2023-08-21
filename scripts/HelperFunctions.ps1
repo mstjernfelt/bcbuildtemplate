@@ -30,7 +30,7 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
         }
         try {
             $TempFile = New-TemporaryFile
-            $response = Invoke-RestMethod -Method Get -Uri $blobUri -Headers $headers -Encoding UTF8
+            $response = Invoke-RestMethod -Method Get -Uri $blobUri -Headers $headers
             $response | Out-File -FilePath $TempFile.FullName -Encoding utf8
 
             Write-Host "Successfully downloaded $($blobUri) from Azure Storage Container to $($TempFile)"
