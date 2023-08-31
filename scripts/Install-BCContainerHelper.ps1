@@ -18,7 +18,7 @@ if ($module) {
     }
     if ($bccontainerhelperVersion -ne $module.Version) {
         Write-Host "Updating bccontainerhelper to $bccontainerhelperVersion"
-        Update-Module -Name bccontainerhelper -Force -RequiredVersion $bccontainerhelperVersion
+        Update-Module -Name bccontainerhelper -Force -RequiredVersion $bccontainerhelperVersion -AllowPrerelease
         Write-Host "bccontainerhelper updated"
     }
 }
