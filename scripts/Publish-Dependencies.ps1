@@ -27,7 +27,7 @@ $settings.dependencies | ForEach-Object {
         $appFile = Join-Path $env:TEMP "$($guid.Guid).zip"
         Write-Host "Downloading app file $($_) to $($appFile)"  
         
-        if ($ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
+        if (![String]::IsNullOrEmpty($ENV:AZ_STORAGE_TENANTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTSECRET)) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_ -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
         }
         else {
