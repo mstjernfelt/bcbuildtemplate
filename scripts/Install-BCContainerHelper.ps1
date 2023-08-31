@@ -29,7 +29,7 @@ else {
     }
     if ($bccontainerhelperVersion -eq "latest") {
         Write-Host "Installing bccontainerhelper"
-        Install-Module -Name bccontainerhelper -Force
+        Install-Module -Name bccontainerhelper -Force -AllowPrerelease
     }
     else {
         Write-Host "Installing bccontainerhelper version $bccontainerhelperVersion"
