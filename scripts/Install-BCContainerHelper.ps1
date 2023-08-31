@@ -12,7 +12,7 @@ if ($module) {
     Write-Host "bccontainerhelper $VersionStr is installed"
     if ($bccontainerhelperVersion -eq "latest") {
         Write-Host "Determine latest bccontainerhelper version"
-        $latestVersion = (Find-Module -Name bccontainerhelper).Version
+        $latestVersion = (Find-Module -Name bccontainerhelper -AllowPrerelease).Version
         $bccontainerhelperVersion = $latestVersion.ToString()
         Write-Host "bccontainerhelper $bccontainerhelperVersion is the latest version"
     }
@@ -29,7 +29,7 @@ else {
     }
     if ($bccontainerhelperVersion -eq "latest") {
         Write-Host "Installing bccontainerhelper"
-        Install-Module -Name bccontainerhelper -Force -AllowPrerelease
+        Install-Module -Name bccontainerhelper -AllowPrerelease -Force
     }
     else {
         Write-Host "Installing bccontainerhelper version $bccontainerhelperVersion"
