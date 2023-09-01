@@ -83,6 +83,8 @@ stages:
       clean: false
       path: 's\bcbuildtemplate'
 
+    - task: printAllVariables@1
+
     - task: PowerShell@2
       displayName: 'Copy Build Template'
       inputs:
