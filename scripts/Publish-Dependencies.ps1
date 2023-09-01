@@ -27,7 +27,7 @@ $settings.dependencies | ForEach-Object {
         $appFile = Join-Path $env:TEMP "$($guid.Guid).zip"
         Write-Host "Downloading app file $($_) to $($appFile)"  
         
-        if (![String]::IsNullOrEmpty($ENV:AZ_STORAGE_TENANTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTSECRET)) {
+        if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_ `
                                                              -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
                                                              -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
@@ -47,7 +47,7 @@ $settings.dependencies | ForEach-Object {
         Write-Host "Downloading app file $($_) to $($appFile)"        
         $appFile = Join-Path $env:TEMP "$($guid.Guid).app"   
         
-        if (![String]::IsNullOrEmpty($ENV:AZ_STORAGE_TENANTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTSECRET)) {
+        if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_ `
                                                              -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
                                                              -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `

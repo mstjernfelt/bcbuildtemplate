@@ -116,7 +116,7 @@ stages:
         Password: $(Password)
         LicenseFile: $(LicenseFile)
         InsiderSasToken: $(InsiderSasToken)
-        az_storage_clientSecret: $(az_storage_clientSecret)
+        az_storage_clientSecret: $(AzStorageClientSecret)
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Create-Container.ps1'
