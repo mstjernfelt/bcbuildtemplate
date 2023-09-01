@@ -29,9 +29,9 @@ $settings.dependencies | ForEach-Object {
         
         if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_ `
-                                                             -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
-                                                             -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
-                                                             -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+                                                             -az_storage_tenantId $ENV:AZSTORAGETENANTID `
+                                                             -az_storage_clientId $ENV:AZSTORAGECLIENTID `
+                                                             -az_storage_clientSecret $ENV:AZSTORAGECLIENTSECRET
         }
         else {
             Download-File -sourceUrl $_ -destinationFile $appFile
@@ -46,12 +46,12 @@ $settings.dependencies | ForEach-Object {
     else {
         Write-Host "Downloading app file $($_) to $($appFile)"        
         $appFile = Join-Path $env:TEMP "$($guid.Guid).app"   
-        
+
         if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_ `
-                                                             -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
-                                                             -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
-                                                             -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+                                                             -az_storage_tenantId $ENV:AZSTORAGETENANTID `
+                                                             -az_storage_clientId $ENV:AZSTORAGECLIENTID `
+                                                             -az_storage_clientSecret $ENV:AZSTORAGECLIENTSECRET
         }
         else {
             Download-File -sourceUrl $_ -destinationFile $appFile

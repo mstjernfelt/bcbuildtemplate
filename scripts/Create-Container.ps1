@@ -110,9 +110,9 @@ if ($licenseFile) {
 # Fetch the license file from private Azure storage using provided credentials
 if ($parameters.licenseFile -ne "" -and ![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
     $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile `
-                                                                    -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
-                                                                    -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
-                                                                    -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+                                                                    -az_storage_tenantId $ENV:AZSTORAGETENANTID `
+                                                                    -az_storage_clientId $ENV:AZSTORAGECLIENTID `
+                                                                    -az_storage_clientSecret $ENV:AZSTORAGECLIENTSECRET
 }
 
 if ($buildenv -eq "Local") {
