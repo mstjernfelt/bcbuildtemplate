@@ -28,6 +28,16 @@ if (-not ($CodeSignPfxPassword)) {
 }
 
 $unsecurepfxFile = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($codeSignPfxFile)))
+
+# If licenseFile is provided and required Azure storage credentials are available
+# Fetch the license file from private Azure storage using provided credentials
+if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
+    $unsecurepfxFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $unsecurepfxFile `
+                                                             -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
+                                                             -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
+                                                             -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+}
+
 $appFolders.Split(',') | ForEach-Object {
     Write-Host "Signing $_"
     Get-ChildItem -Path (Join-Path $buildArtifactFolder $_) -Filter "*.app" | ForEach-Object {
