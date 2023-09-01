@@ -106,17 +106,14 @@ if ($licenseFile) {
     }
 }
 
-if ($parameters.licenseFile -ne "" -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_TENANTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZ_STORAGE_CLIENTSECRET)) {
-    $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
+# If licenseFile is provided and required Azure storage credentials are available
+# Fetch the license file from private Azure storage using provided credentials
+if ($parameters.licenseFile -and $ENV:AZ_STORAGE_TENANTID -and $ENV:AZ_STORAGE_CLIENTID -and $ENV:AZ_STORAGE_CLIENTSECRET) {
+    $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile `
+                                                                    -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID `
+                                                                    -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID `
+                                                                    -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
 }
-else {
-    Write-Host "One or more required values are empty. Please ensure all required environment variables are set with valid values."
-}
-
-
-if ($parameters.licenseFile -ne "" -and $ENV:AZ_STORAGE_TENANTID -ne "" -and $ENV:AZ_STORAGE_CLIENTID -ne "" -and $ENV:AZ_STORAGE_CLIENTSECRET -ne "") {
-    $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile -az_storage_tenantId $ENV:AZ_STORAGE_TENANTID -az_storage_clientId $ENV:AZ_STORAGE_CLIENTID -az_storage_clientSecret $ENV:AZ_STORAGE_CLIENTSECRET
- }
 
 if ($buildenv -eq "Local") {
     $workspaceFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
