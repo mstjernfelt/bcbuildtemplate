@@ -1,5 +1,8 @@
 $useTimeOutWebClient = $false
 if ($PSVersionTable.PSVersion -lt "6.0.0" -or $useTimeOutWebClient) {
+
+    Write-Host "Yes!"
+
     $timeoutWebClientCode = @"
 	using System.Net;
  
@@ -27,6 +30,8 @@ if ($PSVersionTable.PSVersion -lt "6.0.0" -or $useTimeOutWebClient) {
         Add-Type -TypeDefinition $timeoutWebClientCode -Language CSharp -WarningAction SilentlyContinue | Out-Null
         $useTimeOutWebClient = $true
     }
+} else {
+    Write-Host "Nope!"
 }
 
 # Gets License from Private Azure Storage Conatiner and saves it temporarily 
