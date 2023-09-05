@@ -118,7 +118,7 @@ stages:
         Password: $(Password)
         LicenseFile: $(LicenseFile)
         InsiderSasToken: $(InsiderSasToken)
-        azstoragetenantid: $(AzStorageClientTenantId)
+        azstoragetenantid: $(AzStorageTenantId)
         azstorageclientid: $(AzStorageClientId)
         azstorageclientSecret: $(AzStorageClientSecret)
       inputs:
