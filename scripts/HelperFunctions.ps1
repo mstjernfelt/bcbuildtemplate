@@ -11,13 +11,21 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
         [String]$az_storage_clientSecret
     )
 
+    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($az_storage_clientId))
+    Write-Host "Encoded Secret: $encodedSecret"
+
     Write-Host "Getting new Auth Context"
     $context = New-BcAuthContext -tenantID $ENV:AZSTORAGETENANTID -clientID $ENV:AZSTORAGECLIENTID -clientSecret $ENV:AZSTORAGECLIENTSECRET -scopes "https://storage.azure.com/.default"
     Write-Host "Access token retieved"
 
+    $date = Get-Date
+    $formattedDateTime = $date.ToUniversalTime().ToString("R")
+
     $headers = @{ 
         "Authorization" = "Bearer $($context.accessToken)"
         "x-ms-version"  = "2017-11-09"
+        "Content-Type" = "application/json"
+        "x-ms-date" = "$formattedDateTime"
     }
 
     $TempFile = New-TemporaryFile
@@ -34,3 +42,6 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
 
     return($TempFile)
 }
+
+
+
