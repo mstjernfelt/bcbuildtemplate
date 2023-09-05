@@ -109,11 +109,7 @@ if ($licenseFile) {
 # If licenseFile is provided and required Azure storage credentials are available
 # Fetch the license file from private Azure storage using provided credentials
 
-$mySecret = "$(AzStorageClientId)"  # Assuming MyAzureSecret is the name of the pipeline variable mapped to Azure Key Vault
-
-# This will base64 encode the secret, which will then not be auto-masked
-$encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($mySecret))
-Write-Host "Encoded Secret: $encodedSecret"
+Write-Host "Secret: $env:azstoragetenantid"
 
 
 if ($parameters.licenseFile -ne "" -and ![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
