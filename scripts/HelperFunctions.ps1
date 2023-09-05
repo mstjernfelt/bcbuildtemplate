@@ -11,10 +11,6 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
         [String]$az_storage_clientSecret
     )
 
-    Write-Host "az_storage_tenantId: $az_storage_tenantId"
-    Write-Host "az_storage_clientId: $az_storage_clientId"
-    Write-Host "az_storage_clientSecret: $az_storage_clientSecret"
-
     Write-Host "Getting new Auth Context"
     $context = New-BcAuthContext -tenantID $az_storage_tenantId -clientID $az_storage_clientId -clientSecret $az_storage_clientSecret -scopes "https://storage.azure.com/.default"
     Write-Host "Access token retieved"
@@ -27,6 +23,8 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
     $TempFile = New-TemporaryFile
 
     Write-Host "Downloading $blobUri to $TempFile"
+
+    Write-Host "Headers: $headers"
 
     Download-File -sourceUrl $blobUri -destinationFile $TempFile -headers $headers
 
