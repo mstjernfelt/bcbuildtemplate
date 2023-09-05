@@ -108,6 +108,7 @@ if ($licenseFile) {
 
 # If licenseFile is provided and required Azure storage credentials are available
 # Fetch the license file from private Azure storage using provided credentials
+Write-Host "AZSTORAGETENANTID: $($ENV:AZSTORAGETENANTID)"
 
 if ($parameters.licenseFile -ne "" -and ![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
     $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile `
