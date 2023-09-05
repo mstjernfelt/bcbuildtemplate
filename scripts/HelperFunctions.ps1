@@ -40,9 +40,12 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
 Function ConvertSecureString($secureString) {
     if (Test-WSMan -Credential $secureString) {
         Write-Host "The string is secure, converting."
+        Write-Host "Secure: $secureString"
         $secureString = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureString)))
+        Write-Host "Unsecure Converted: $secureString"
         return $secureString
     } else {
         Write-Host "The string not secure."
+        Write-Host "Unsecure: $secureString"
     }
 }
