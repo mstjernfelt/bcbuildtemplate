@@ -5,15 +5,15 @@
 
 Write-Host "Version: $bccontainerhelperVersion"
 
-if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
+if (![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGECLIENTSECRET)) {
     Write-Host "Get downloadFromPrivateAzureStorage = $ENV:DOWNLOADFROMPRIVATEAZURESTORAGE"
-    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
+    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:UNSECUREAAZSTORAGETENANTID))
     Write-Host "Get azStorageTenantId = $encodedSecret"
 
-    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
+    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:UNSECUREAAZSTORAGECLIENTID))
     Write-Host "Get azStorageClientId = $encodedSecret"
 
-    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
+    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:UNSECUREAAZSTORAGECLIENTSECRET))
     Write-Host "Get azStorageClientSecret = $encodedSecret"
 } else {
     Write-Host "Nope!"
