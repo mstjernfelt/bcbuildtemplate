@@ -73,6 +73,9 @@ stages:
       appBuild: $[counter(variables['appVersion'],0)]
       appRevision: 0
       skipComponentGovernanceDetection: True
+      azstoragetenantid: $(AzStorageTenantId)
+      azstorageclientid: $(AzStorageClientId)
+      azstorageclientSecret: $(AzStorageClientSecret)          
 
     steps:
     - checkout: self
@@ -91,14 +94,13 @@ stages:
         arguments: '-AgentToolsDirectory "$(Agent.ToolsDirectory)"'
         failOnStderr: true
 
+    - task: printAllVariables@1
+
     - task: PowerShell@2
       displayName: 'Reading Settings'
       env:
         Password: $(Password)
         SyncAppMode: ${{ parameters.SyncAppMode }}"
-        azstoragetenantid: $(AzStorageTenantId)
-        azstorageclientid: $(AzStorageClientId)
-        azstorageclientSecret: $(AzStorageClientSecret)          
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
