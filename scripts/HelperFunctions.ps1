@@ -7,10 +7,6 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
 
     Write-Host "Getting new Auth Context"
 
-    Write-Host $ENV:UNSECUREAZSTORAGETENANTID
-    Write-Host $ENV:UNSECUREAZSTORAGECLIENTID
-    Write-Host $ENV:UNSECUREAZSTORAGECLIENTSECRET
-
     $context = New-BcAuthContext -tenantID $ENV:UNSECUREAZSTORAGETENANTID -clientID $ENV:UNSECUREAZSTORAGECLIENTID -clientSecret $ENV:UNSECUREAZSTORAGECLIENTSECRET -scopes "https://storage.azure.com/.default"
     
     if (!$context) {

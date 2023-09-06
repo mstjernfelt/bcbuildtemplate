@@ -5,6 +5,10 @@
 
 Write-Host "Version: $bccontainerhelperVersion"
 
+Write-Host "EAZSTORAGETENANTID: $ENV:AZSTORAGETENANTID"
+Write-Host "EAZSTORAGECLIENTID: $ENV:AZSTORAGECLIENTID"
+Write-Host "EAZSTORAGECLIENTSECRET: $ENV:AZSTORAGECLIENTSECRET"
+
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {
     $versionStr = $module.Version.ToString()
