@@ -8,7 +8,7 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
     Write-Host "Getting new Auth Context"
     $context = New-BcAuthContext -tenantID $ENV:AZSTORAGETENANTID -clientID $ENV:AZSTORAGECLIENTID -clientSecret $ENV:AZSTORAGECLIENTSECRET -scopes "https://storage.azure.com/.default"
     
-    if (!context) {
+    if (!$context) {
         throw "Error retrieving Access token"
     } else {
         Write-Host "Access token retieved"
