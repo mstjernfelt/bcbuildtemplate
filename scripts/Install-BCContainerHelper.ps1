@@ -5,14 +5,6 @@
 
 Write-Host "Version: $bccontainerhelperVersion"
 
-if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
-    Write-Host "Get azStorageTenantId = $ENV:UNSECUREAZSTORAGETENANTID"
-    Write-Host "Get azStorageClientId = $ENV:UNSECUREAZSTORAGECLIENTID"
-    Write-Host "Get azStorageClientSecret = $ENV:UNSECUREAZSTORAGECLIENTSECRET"
-} else {
-    Write-Host "Nope!"
-}
-
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {
     $versionStr = $module.Version.ToString()
