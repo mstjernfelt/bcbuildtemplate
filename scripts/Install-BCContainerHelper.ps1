@@ -5,11 +5,10 @@
 
 Write-Host "Version: $bccontainerhelperVersion"
 
-if (![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:UNSECUREAZSTORAGECLIENTSECRET)) {
-    Write-Host "Get downloadFromPrivateAzureStorage = $ENV:DOWNLOADFROMPRIVATEAZURESTORAGE"
-    Write-Host "Get azStorageTenantId = $ENV:UNSECUREAAZSTORAGETENANTID"
-    Write-Host "Get azStorageClientId = $ENV:UNSECUREAAZSTORAGECLIENTID"
-    Write-Host "Get azStorageClientSecret = $ENV:UNSECUREAAZSTORAGECLIENTSECRET"
+if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
+    Write-Host "Get azStorageTenantId = $ENV:UNSECUREAZSTORAGETENANTID"
+    Write-Host "Get azStorageClientId = $ENV:UNSECUREAZSTORAGECLIENTID"
+    Write-Host "Get azStorageClientSecret = $ENV:UNSECUREAZSTORAGECLIENTSECRET"
 } else {
     Write-Host "Nope!"
 }
