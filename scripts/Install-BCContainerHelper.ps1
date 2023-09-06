@@ -3,12 +3,14 @@
     [string] $bccontainerhelperVersion = "latest"
 )
 
-Write-Host "azStorageTenantId = $(azStorageTenantId)"
-Write-Host "azStorageClientId = $(azStorageClientId)"
-Write-Host "azStorageClientSecret = $(azStorageClientSecret)"
+$azstoragetenantid = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
+$azstorageclientid = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
+$azstorageclientsecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
+Write-Host "azStorageTenantId = $azstoragetenantid"
+Write-Host "azStorageClientId = $azstorageclientid"
+Write-Host "azStorageClientSecret = $azstorageclientsecret"
 
 Write-Host "Version: $bccontainerhelperVersion"
-
 
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {
