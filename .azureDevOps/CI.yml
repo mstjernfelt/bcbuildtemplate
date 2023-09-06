@@ -98,6 +98,9 @@ stages:
       env:
         Password: $(Password)
         SyncAppMode: ${{ parameters.SyncAppMode }}"
+        azstoragetenantid: $(AzStorageTenantId)
+        azstorageclientid: $(AzStorageClientId)
+        azstorageclientSecret: $(AzStorageClientSecret)          
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Read-Settings.ps1'
