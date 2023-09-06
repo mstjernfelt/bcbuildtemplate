@@ -192,7 +192,6 @@ if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmp
     Write-Host "Set azStorageClientId = $encodedSecret"
     Write-Host "##vso[task.setvariable variable=azStorageClientId]$ENV:AZSTORAGECLIENTID"
 
-    $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
-    Write-Host "Set azStorageClientSecret = $encodedSecret"
+    Write-Host "Set azStorageClientSecret = $ENV:AZSTORAGECLIENTSECRET"
     Write-Host "##vso[task.setvariable variable=azStorageClientSecret]$ENV:AZSTORAGECLIENTSECRET"
 }

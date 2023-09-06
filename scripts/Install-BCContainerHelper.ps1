@@ -3,6 +3,19 @@
     [string] $bccontainerhelperVersion = "latest"
 )
 
+
+$encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
+Write-Host "Set azStorageTenantId = $encodedSecret"
+Write-Host "##vso[task.setvariable variable=azStorageTenantId]$ENV:AZSTORAGETENANTID"
+
+$encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
+Write-Host "Set azStorageClientId = $encodedSecret"
+Write-Host "##vso[task.setvariable variable=azStorageClientId]$ENV:AZSTORAGECLIENTID"
+
+$encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
+Write-Host "Set azStorageClientSecret = $encodedSecret"
+Write-Host "##vso[task.setvariable variable=azStorageClientSecret]$ENV:AZSTORAGECLIENTSECRET"
+
 Write-Host "Version: $bccontainerhelperVersion"
 
 
