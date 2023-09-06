@@ -106,6 +106,7 @@ if ($licenseFile) {
     }
 }
 
+# If azure storage App Registration information is provided, download licensefile using Oauth2 authentication
 if ($parameters.licenseFile -ne "" -and $ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
     $parameters.licenseFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $parameters.licenseFile
 }

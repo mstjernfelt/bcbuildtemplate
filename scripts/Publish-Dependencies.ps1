@@ -27,6 +27,7 @@ $settings.dependencies | ForEach-Object {
         $appFile = Join-Path $env:TEMP "$($guid.Guid).zip"
         Write-Host "Downloading app file $($_) to $($appFile)"  
         
+        # If azure storage App Registration information is provided, download dependency zip using Oauth2 authentication        
         if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_
         }
@@ -43,11 +44,8 @@ $settings.dependencies | ForEach-Object {
     else {
         Write-Host "Downloading app file $($_) to $($appFile)"        
         $appFile = Join-Path $env:TEMP "$($guid.Guid).app"   
-
-        Write-Host "AZSTORAGETENANTID: $($ENV:AZSTORAGETENANTID)"
-        Write-Host "AZSTORAGETENANTID: $($ENV:AZSTORAGECLIENTID)"
-        Write-Host "AZSTORAGETENANTID: $($ENV:AZSTORAGECLIENTSECRET)"
-
+        
+        # If azure storage App Registration information is provided, download dependency app using Oauth2 authentication
         if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_
         }

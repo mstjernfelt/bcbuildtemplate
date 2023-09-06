@@ -29,8 +29,7 @@ if (-not ($CodeSignPfxPassword)) {
 
 $unsecurepfxFile = ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($codeSignPfxFile)))
 
-# If licenseFile is provided and required Azure storage credentials are available
-# Fetch the license file from private Azure storage using provided credentials
+# If azure storage App Registration information is provided, download certificate using Oauth2 authentication
 if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
     $unsecurepfxFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $unsecurepfxFile
 }

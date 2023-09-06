@@ -180,19 +180,7 @@ $testMethodName = $settings.TestMethod.MethodName
 Write-Host "Set testMethodName = $testMethodName"
 Write-Host "##vso[task.setvariable variable=testMethodName]$testMethodName"
 
-# if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
-#     Write-Host "Set downloadFromPrivateAzureStorage = $true"
-#     Write-Host "##vso[task.setvariable variable=downloadFromPrivateAzureStorage]$true"
-
-#     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
-#     Write-Host "Set unsecureAzStorageTenantId = $encodedSecret"
-#     Write-Host "##vso[task.setvariable variable=unsecureAzStorageTenantId;issecret=true]$encodedSecret"
-
-#     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
-#     Write-Host "Set unsecureAzStorageClientId = $encodedSecret"
-#     Write-Host "##vso[task.setvariable variable=unsecureAzStorageClientId;issecret=true]$encodedSecret"
-
-#     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
-#     Write-Host "Set unsecureAzStorageClientSecret = $encodedSecret"
-#     Write-Host "##vso[task.setvariable variable=unsecureAzStorageClientSecret;issecret=true]$encodedSecret"
-# }
+if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID) -and ![String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)) {
+    Write-Host "Set downloadFromPrivateAzureStorage = $true"
+    Write-Host "##vso[task.setvariable variable=downloadFromPrivateAzureStorage]$true"
+    }
