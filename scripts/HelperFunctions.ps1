@@ -7,8 +7,12 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
 
     Write-Host "Getting new Auth Context"
     $context = New-BcAuthContext -tenantID $ENV:AZSTORAGETENANTID -clientID $ENV:AZSTORAGECLIENTID -clientSecret $ENV:AZSTORAGECLIENTSECRET -scopes "https://storage.azure.com/.default"
-    Write-Host $context
-    Write-Host "Access token retieved"
+    
+    if (!context) {
+        throw "Error retrieving Access token"
+    } else {
+        Write-Host "Access token retieved"
+    }
 
     $date = Get-Date
     $formattedDateTime = $date.ToUniversalTime().ToString("R")
