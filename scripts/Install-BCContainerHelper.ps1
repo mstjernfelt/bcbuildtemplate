@@ -3,14 +3,16 @@
     [string] $bccontainerhelperVersion = "latest"
 )
 
-$azstoragetenantid = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
-$azstorageclientid = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
-$azstorageclientsecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
+Write-Host "Version: $bccontainerhelperVersion"
+
+$azStorageTenantId = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:azStorageTenantId))
+$azStorageClientId = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:azStorageClientId))
+$azStorageClientSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:azStorageClientSecret))
+
+Write-Host "downloadFromPrivateAzureStorage = $env:downloadFromPrivateAzureStorage"
 Write-Host "azStorageTenantId = $azstoragetenantid"
 Write-Host "azStorageClientId = $azstorageclientid"
 Write-Host "azStorageClientSecret = $azstorageclientsecret"
-
-Write-Host "Version: $bccontainerhelperVersion"
 
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {
