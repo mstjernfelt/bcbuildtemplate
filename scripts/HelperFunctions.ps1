@@ -2,13 +2,7 @@
 Function Get-BlobFromPrivateAzureStorageOauth2 {
     param(
         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$blobUri,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_tenantId,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_clientId,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
-        [String]$az_storage_clientSecret
+        [String]$blobUri
     )
 
     Write-Host "Getting new Auth Context"
