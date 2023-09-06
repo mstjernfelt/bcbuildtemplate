@@ -186,13 +186,13 @@ if (![String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID) -and ![String]::IsNullOrEmp
 
     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGETENANTID))
     Write-Host "Set azStorageTenantId = $encodedSecret"
-    Write-Host "##vso[task.setvariable variable=azStorageTenantId;issecret=true]$ENV:AZSTORAGETENANTID"
+    Write-Host "##vso[task.setvariable variable=unsecureAzStorageTenantId]$encodedSecret"
 
     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTID))
     Write-Host "Set azStorageClientId = $encodedSecret"
-    Write-Host "##vso[task.setvariable variable=azStorageClientId;issecret=true]$ENV:AZSTORAGECLIENTID"
+    Write-Host "##vso[task.setvariable variable=unsecureAzStorageClientId]$encodedSecret"
 
     $encodedSecret = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($ENV:AZSTORAGECLIENTSECRET))
     Write-Host "Set azStorageClientSecret = $encodedSecret"
-    Write-Host "##vso[task.setvariable variable=azStorageClientSecret;issecret=true]$ENV:AZSTORAGECLIENTSECRET"
+    Write-Host "##vso[task.setvariable variable=unsecureAzStorageClientSecret]$encodedSecret"
 }

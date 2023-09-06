@@ -6,9 +6,9 @@
 Write-Host "Version: $bccontainerhelperVersion"
 
 Write-Host "downloadFromPrivateAzureStorage = $env:downloadFromPrivateAzureStorage"
-Write-Host "azStorageTenantId = $env:azstoragetenantid"
-Write-Host "azStorageClientId = $env:azstorageclientid"
-Write-Host "azStorageClientSecret = $env:azstorageclientsecret"
+Write-Host "unsecureAzStorageTenantId = $env:unsecureAzstoragetenantid"
+Write-Host "unsecureAzStorageClientId = $env:unsecureAzstorageclientid"
+Write-Host "unsecureAzStorageClientSecret = $env:unsecureAzstorageclientsecret"
 
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {
