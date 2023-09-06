@@ -5,9 +5,9 @@
 
 Write-Host "Version: $bccontainerhelperVersion"
 
-Write-Host "EAZSTORAGETENANTID: $ENV:AZSTORAGETENANTID"
-Write-Host "EAZSTORAGECLIENTID: $ENV:AZSTORAGECLIENTID"
-Write-Host "EAZSTORAGECLIENTSECRET: $ENV:AZSTORAGECLIENTSECRET"
+Write-Host "AzStorageClientId: $ENV:AzStorageClientId"
+Write-Host "AzStorageClientSecret: $ENV:AzStorageClientSecret"
+Write-Host "AzStorageTenantId: $ENV:AzStorageTenantId"
 
 $module = Get-InstalledModule -Name bccontainerhelper -ErrorAction SilentlyContinue
 if ($module) {

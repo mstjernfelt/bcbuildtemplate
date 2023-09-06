@@ -73,9 +73,6 @@ stages:
       appBuild: $[counter(variables['appVersion'],0)]
       appRevision: 0
       skipComponentGovernanceDetection: True
-      azstoragetenantid: $(AzStorageTenantId)
-      azstorageclientid: $(AzStorageClientId)
-      azstorageclientSecret: $(AzStorageClientSecret)          
 
     steps:
     - checkout: self
@@ -109,6 +106,10 @@ stages:
     
     - task: PowerShell@2
       displayName: 'Install bccontainerhelper'
+      env:
+        azstoragetenantid: $(AzStorageTenantId)
+        azstorageclientid: $(AzStorageClientId)
+        azstorageclientSecret: $(AzStorageClientSecret)          
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Install-bccontainerhelper.ps1'
@@ -121,6 +122,10 @@ stages:
         Password: $(Password)
         LicenseFile: $(LicenseFile)
         InsiderSasToken: $(InsiderSasToken)
+        azstoragetenantid: $(AzStorageTenantId)
+        azstorageclientid: $(AzStorageClientId)
+        azstorageclientSecret: $(AzStorageClientSecret)          
+
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Create-Container.ps1'
@@ -155,6 +160,9 @@ stages:
       env:
         codeSignPfxFile: $(CodeSignPfxFile)
         codeSignPfxPassword: $(CodeSignPfxPassword)
+        azstoragetenantid: $(AzStorageTenantId)
+        azstorageclientid: $(AzStorageClientId)
+        azstorageclientSecret: $(AzStorageClientSecret)          
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Sign-App.ps1'
@@ -226,6 +234,9 @@ stages:
       env:
         codeSignPfxFile: $(CodeSignPfxFile)
         codeSignPfxPassword: $(CodeSignPfxPassword)
+        azstoragetenantid: $(AzStorageTenantId)
+        azstorageclientid: $(AzStorageClientId)
+        azstorageclientSecret: $(AzStorageClientSecret)          
       inputs:
         targetType: filePath
         filePath: '$(Agent.ToolsDirectory)\bcbuildtemplate\Sign-App.ps1'
