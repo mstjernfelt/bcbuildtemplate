@@ -19,6 +19,8 @@
     [securestring] $codeSignPfxPassword = $null
 )
 
+. (Join-Path $PSScriptRoot "HelperFunctions.ps1")
+
 if (-not ($CodeSignPfxFile)) {
     $CodeSignPfxFile = try { $ENV:CODESIGNPFXFILE | ConvertTo-SecureString } catch { ConvertTo-SecureString -String $ENV:CODESIGNPFXFILE -AsPlainText -Force }
 }
