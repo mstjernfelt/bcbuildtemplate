@@ -180,19 +180,11 @@ $testMethodName = $settings.TestMethod.MethodName
 Write-Host "Set testMethodName = $testMethodName"
 Write-Host "##vso[task.setvariable variable=testMethodName]$testMethodName"
 
-Write-Host "AZSTORAGETENANTID: $ENV:AZSTORAGETENANTID"
-Write-Host "AZSTORAGECLIENTID: $ENV:AZSTORAGECLIENTID"
-Write-Host "AZSTORAGECLIENTSECRET: $ENV:AZSTORAGECLIENTSECRET"
-
 if ($ENV:AZSTORAGETENANTID -ne "`$(AzStorageTenantId)" -and $ENV:AZSTORAGETENANTID -ne "") { $AzStorageTenantIdIsSet = $true } else { $AzStorageTenantIdIsSet = $false }
 if ($ENV:AZSTORAGECLIENTID -ne "`$(AzStorageClientId)" -and $ENV:AZSTORAGECLIENTID -ne "") { $AzStorageClientIdIsSet = $true } else { $AzStorageClientIdIsSet = $false }
 if ($ENV:AZSTORAGECLIENTSECRET -ne "`$(AzStorageClientSecret)" -and $ENV:AZSTORAGECLIENTSECRET -ne "") { $AzStorageClientSecretIsSet = $true } else { $AzStorageClientSecretIsSet = $false }
 
-Write-Host "AzStorageTenantIdIsSet: $AzStorageTenantIdIsSet"
-Write-Host "AzStorageClientIdIsSet: $AzStorageClientIdIsSet"
-Write-Host "AzStorageClientSecretIsSet: $AzStorageClientSecretIsSet"
-
 if ($AzStorageTenantIdIsSet -and $AzStorageClientIdIsSet -and $AzStorageClientSecretIsSet) {
     Write-Host "Set downloadFromPrivateAzureStorage = $true"
     Write-Host "##vso[task.setvariable variable=downloadFromPrivateAzureStorage]$true"
-    }
+}
