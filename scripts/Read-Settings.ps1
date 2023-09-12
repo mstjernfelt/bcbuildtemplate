@@ -180,11 +180,11 @@ $testMethodName = $settings.TestMethod.MethodName
 Write-Host "Set testMethodName = $testMethodName"
 Write-Host "##vso[task.setvariable variable=testMethodName]$testMethodName"
 
-$temp = $ENV:AZSTORAGETENANTID -ne ""
+$temp = IsNullOrEmpty($ENV:AZSTORAGETENANTID)
 Write-Host "ENV:AZSTORAGETENANTID: $temp"
-$temp = $ENV:AZSTORAGECLIENTID -ne ""
+$temp = IsNullOrEmpty($ENV:AZSTORAGECLIENTID)
 Write-Host "ENV:AZSTORAGECLIENTID: $temp"
-$temp = $ENV:AZSTORAGECLIENTSECRET -ne ""
+$temp = IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)
 Write-Host "ENV:AZSTORAGECLIENTSECRET: $temp"
 
 if ($ENV:AZSTORAGETENANTID -ne "" -and $ENV:AZSTORAGECLIENTID -ne "" -and $ENV:AZSTORAGECLIENTSECRET -ne "") {
