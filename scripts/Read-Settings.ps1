@@ -180,10 +180,6 @@ $testMethodName = $settings.TestMethod.MethodName
 Write-Host "Set testMethodName = $testMethodName"
 Write-Host "##vso[task.setvariable variable=testMethodName]$testMethodName"
 
-Write-Host "AZSTORAGETENANTID: $ENV:AZSTORAGETENANTID"
-Write-Host "AZSTORAGECLIENTID: $ENV:AZSTORAGECLIENTID"
-Write-Host "AZSTORAGECLIENTSECRET: $ENV:AZSTORAGECLIENTSECRET"
-
 if ($ENV:AZSTORAGETENANTID -ne "" -and $ENV:AZSTORAGECLIENTID -ne "" -and $ENV:AZSTORAGECLIENTSECRET -ne "") {
     Write-Host "Set downloadFromPrivateAzureStorage = $true"
     Write-Host "##vso[task.setvariable variable=downloadFromPrivateAzureStorage]$true"

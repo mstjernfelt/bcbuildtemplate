@@ -1,4 +1,3 @@
-# Gets License from Private Azure Storage Conatiner and saves it temporarily 
 Function Get-BlobFromPrivateAzureStorageOauth2 {
     param(
         [Parameter(ValueFromPipelineByPropertyName, Mandatory = $true)]
@@ -31,6 +30,3 @@ Function Get-BlobFromPrivateAzureStorageOauth2 {
 
     return($TempFile)
 }
-
-
-

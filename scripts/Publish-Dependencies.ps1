@@ -40,8 +40,7 @@ $settings.dependencies | ForEach-Object {
         Expand-Archive -Path $appFile -DestinationPath $appFolder
         Remove-Item -Path $appFile -Force
         $appFile = Get-ChildItem -Path $appFolder -Recurse -Include *.app -File | Select-Object -First 1
-    }
-    else {
+    } else {
         Write-Host "Downloading app file $($_) to $($appFile)"        
         $appFile = Join-Path $env:TEMP "$($guid.Guid).app"   
         
