@@ -181,11 +181,11 @@ Write-Host "Set testMethodName = $testMethodName"
 Write-Host "##vso[task.setvariable variable=testMethodName]$testMethodName"
 
 $temp = [String]::IsNullOrEmpty($ENV:AZSTORAGETENANTID)
-Write-Host "ENV:AZSTORAGETENANTID: $temp"
+Write-Host "ENV:AZSTORAGETENANTID: $temp ($ENV:AZSTORAGETENANTID)"
 $temp = [String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTID)
-Write-Host "ENV:AZSTORAGECLIENTID: $temp"
+Write-Host "ENV:AZSTORAGECLIENTID: $temp ($ENV:AZSTORAGECLIENTID)"
 $temp = [String]::IsNullOrEmpty($ENV:AZSTORAGECLIENTSECRET)
-Write-Host "ENV:AZSTORAGECLIENTSECRET: $temp"
+Write-Host "ENV:AZSTORAGECLIENTSECRET: $temp ($ENV:AZSTORAGECLIENTSECRET)"
 
 if ($ENV:AZSTORAGETENANTID -ne "" -and $ENV:AZSTORAGECLIENTID -ne "" -and $ENV:AZSTORAGECLIENTSECRET -ne "") {
     Write-Host "Set downloadFromPrivateAzureStorage = $true"
