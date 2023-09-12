@@ -27,8 +27,8 @@ $settings.dependencies | ForEach-Object {
         $appFile = Join-Path $env:TEMP "$($guid.Guid).zip"
         Write-Host "Downloading app file $($_) to $($appFile)"  
         
-        # If azure storage App Registration information is provided, download dependency zip using Oauth2 authentication        
-        if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
+        # If azure storage App Registration information is provided and Url contains blob.core.windows.net, download dependency zip using Oauth2 authentication        
+        if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE -and $_.Contains("blob.core.windows.net")) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_
         }
         else {
@@ -44,8 +44,8 @@ $settings.dependencies | ForEach-Object {
         Write-Host "Downloading app file $($_) to $($appFile)"        
         $appFile = Join-Path $env:TEMP "$($guid.Guid).app"   
         
-        # If azure storage App Registration information is provided, download dependency app using Oauth2 authentication
-        if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE) {
+        # If azure storage App Registration information is provided and Url contains blob.core.windows.net, download dependency app using Oauth2 authentication
+        if ($ENV:DOWNLOADFROMPRIVATEAZURESTORAGE -and $_.Contains("blob.core.windows.net")) {
             $appFile = Get-BlobFromPrivateAzureStorageOauth2 -blobUri $_
         }
         else {
