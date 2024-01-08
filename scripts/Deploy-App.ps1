@@ -62,6 +62,9 @@ foreach ($deployment in $deployments) {
         $appFolder = $_
         Write-Host "Deploying ${appFolder} to ${deploymentType}"
         $appFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\*.app")).FullName
+
+        Write-Host "DEBUG: appFile: ${appFile}"
+
         $appJsonFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\app.json")).FullName
         $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
