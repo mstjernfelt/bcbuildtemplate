@@ -63,8 +63,6 @@ foreach ($deployment in $deployments) {
         Write-Host "Deploying ${appFolder} to ${deploymentType}"
         $appFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\*.app")).FullName
 
-        Write-Host "DEBUG: appFile: ${appFile}"
-
         $appJsonFile = (Get-Item (Join-Path $artifactsFolder "$appFolder\app.json")).FullName
         $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
@@ -219,14 +217,23 @@ foreach ($deployment in $deployments) {
                             $vmSession = New-DeploymentRemoteSession -HostName $VM
                         }
                     }
+                    Write-Host "DEBUG: CopyFileToSession -session $vmSession -localFile $appFile"
+
                     $tempAppFile = CopyFileToSession -session $vmSession -localFile $appFile
+
+                    Write-Host "DEBUG: useSession, tempAppFile: $tempAppFile"
+
                     $sessionArgument = @{ "Session" = $vmSession }
                 }
                 else {
                     $tempAppFile = $appFile
+                    
+                    Write-Host "DEBUG: tempAppFile: $tempAppFile"
+
                     $sessionArgument = @{ }
                 }
     
+                
                 Invoke-Command @sessionArgument -ScriptBlock { Param($appFile, $DeployToInstance, $installNewApps, $SyncAppMode)
                     $ErrorActionPreference = "Stop"
     
